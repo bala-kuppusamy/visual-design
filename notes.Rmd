@@ -1,0 +1,398 @@
+---
+title: "Design Contest Notes"
+author: "Bala Kuppusamy"
+date: "2019-03-16"
+output: html_document
+---
+   
+
+```{r install, eval = FALSE}
+
+## This code will not be evaluated automatically.
+## (Notice the eval = FALSE declaration in the options section of the
+## code chunk)
+
+my_packages <- c("tidyverse", "broom", "coefplot", "cowplot",
+                 "gapminder", "GGally", "ggrepel", "ggridges", "gridExtra",
+                 "here", "interplot", "margins", "maps", "mapproj",
+                 "mapdata", "MASS", "quantreg", "rlang", "scales",
+                 "survey", "srvyr", "viridis", "viridisLite", "devtools")
+
+install.packages(my_packages, repos = "http://cran.rstudio.com")
+
+install.packages('nasaweather')
+
+```
+
+
+```{r setup, include=FALSE}
+
+## By defult, show code for all chunks in the knitted document,
+## as well as the output. To override for a particular chunk
+## use echo = FALSE in its options.
+knitr::opts_chunk$set(echo = TRUE) 
+
+## Set the default size of figures
+knitr::opts_chunk$set(fig.width=8, fig.height=5)  
+
+## Load the libraries we will be using
+library(gapminder)
+library(here)
+library(socviz)
+library(tidyverse)
+library(nasaweather)
+library(skimr)
+library(maps)
+library(ggthemes)
+library(sf)
+library(rgeos)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(leaflet)
+library(ggridges)
+library(viridis)
+
+```
+
+
+## Look at Data
+
+```{r}
+# glimpse(nasaweather::atmos)
+# skim(nasaweather::atmos)
+# 
+# glimpse(nasaweather::borders)
+# skim(nasaweather::borders)
+# 
+# glimpse(nasaweather::elev)
+# skim(nasaweather::elev)
+# 
+# glimpse(nasaweather::glaciers)
+# skim(nasaweather::glaciers)
+# 
+glimpse(nasaweather::storms)
+# skim(nasaweather::storms)
+
+```
+
+
+## Get Started
+
+```{r}
+glimpse(nasaweather::atmos)
+storms <- nasaweather::storms
+
+glimpse(storms)
+
+storms %>%
+  dplyr::group_by(year) %>%
+  dplyr::mutate(min_day = min(seasday), max_day = max(seasday)) %>%
+  dplyr::mutate(start = 1, end = max_day - min_day + 1) %>%
+  dplyr::select(year, min_day, max_day, start, end) %>%
+  dplyr::distinct()
+
+storms %>%
+  dplyr::group_by(name) %>%
+  dplyr::mutate(lastSeasDay = max(seasday)) %>%
+  dplyr::select(year, month, day, name, type, seasday, lastSeasDay)
+
+
+```
+
+
+## Make a Plot
+
+```{r}
+us_states <- map_data('world')
+us_states %>%
+  ggplot(mapping = aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = 'white', color = 'gray90')
+  # coord_map()
+  # coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+
+world <- map_data("world")
+worldmap <- ggplot(world, aes(x = long, y = lat, group = group)) +
+  geom_path(color = 'gray90') +
+  scale_y_continuous(breaks = (-2:2) * 30) +
+  scale_x_continuous(breaks = (-4:4) * 45)
+worldmap +
+  theme_map()
+```
+
+
+## Show the Right Numbers
+
+```{r}
+
+# p <- ggplot(data = us_states, mapping = aes(x = long, y = lat, group = group)) +
+#   geom_polygon(fill = 'white', color = 'gray90')
+  # coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+# p
+
+storms_1995 <- storms %>%
+  dplyr::filter(year == 1995)
+
+storms_1995
+
+```
+
+```{r}
+storms_dates <- storms %>%
+  dplyr::select(name, year, month, day, hour) %>%
+  dplyr::group_by(year, name) %>%
+  dplyr::mutate(date = dmy(paste(day, month, 1995, sep = '/'))) %>%
+  dplyr::mutate(min_date = min(date), max_date = max(date)) %>%
+  dplyr::select(name, year, min_date, max_date) %>%
+  dplyr::distinct()
+
+storms_dates
+
+storms_dates$min_date[storms_dates$name == 'Allison']
+
+```
+
+```{r}
+
+storms %>%
+  group_by(wind) %>%
+  mutate(tot = n(), avg = tot/6)
+
+```
+
+
+```{r}
+p +
+  geom_path(data = storms_1995, mapping = aes(x = long, y = lat, group = name, color = type)) +
+  theme_map()
+
+```
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+p2 <- ggplot(data = world) +
+    geom_sf() +
+    coord_sf(xlim = c(-132.15, -4.12), ylim = c(2.65, 63.97), expand = FALSE)
+
+p2 + geom_path(data = storms_1995, mapping = aes(x = long, y = lat, group = name, color = type)) +
+  theme_map() + theme(legend.position = 'bottom')
+
+
+```
+
+
+```{r}
+m <- leaflet(options = leafletOptions(minZoom = 10, maxZoom = 15)) %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng = 174.768, lat = -36.852, popup = 'The birthplace of R')
+m
+```
+
+
+## Refine your Plots
+
+```{r}
+
+m <- leaflet(glaciers, options = leafletOptions(minZoom = 4, maxZoom = 15)) %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircles(lng = ~long, lat = ~lat, radius = 2000, color = 'red', fillColor = 'red', popup = ~country)
+m
+
+```
+
+
+```{r}
+glaciers %>%
+  dplyr::group_by(name) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::select(name, n) %>%
+  dplyr::distinct()
+
+```
+
+
+```{r data}
+
+glimpse(nasaweather::borders)
+skim(nasaweather::borders)
+
+glimpse(nasaweather::elev)
+skim(nasaweather::elev)
+
+```
+
+```{r maps}
+us_states <- map_data('world')
+us_states %>%
+  ggplot(mapping = aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = 'white', color = 'gray90')
+  # coord_map()
+  # coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+
+world <- map_data("world")
+worldmap <- ggplot(world, aes(x = long, y = lat, group = group)) +
+  geom_path(color = 'gray90') +
+  scale_y_continuous(breaks = (-2:2) * 30) +
+  scale_x_continuous(breaks = (-4:4) * 45)
+worldmap +
+  theme_map()
+
+```
+
+```{r gulf_plots, message=FALSE}
+atmos <- nasaweather::atmos
+kelvin <- 272.15
+
+gulf <- atmos %>%
+  filter(lat < 40 & lat > 10) %>%
+  filter(long > -100 & long < -70) %>%
+  mutate(mon = factor(month), temp_c = temp - kelvin, surftemp_c = surftemp - kelvin)
+
+gulf_yr_summary <- gulf %>%
+  group_by(month) %>%
+  summarise(avg_yr_temp = mean(temp_c), avg_yr_surftemp = mean(surftemp_c), avg_yr_pressure = mean(pressure))
+
+gulf_summary <- gulf %>%
+  group_by(year, month) %>%
+  summarise(avg_temp = mean(temp_c), avg_surftemp = mean(surftemp_c), avg_pressure = mean(pressure))
+
+gulf <- gulf %>%
+  inner_join(gulf_yr_summary) %>%
+  inner_join(gulf_summary)
+
+p_temp_yr <- gulf %>%
+  ggplot(mapping = aes(x = temp_c, y = mon, color = avg_yr_temp, fill = avg_yr_temp)) +
+  geom_density_ridges(rel_min_height = 0.01, alpha = 0.4) +
+  labs(title = 'Monthly avg temperature variation in Gulf of Mexico', x = 'Temperature (C)', y = 'Month', color = 'Avg Temp (C)', fill = 'Avg Temp (C)') +
+  # scale_colour_brewer(palette = 'heat')
+  scale_colour_gradient(low = 'Orange', high = 'Red') +
+  scale_fill_gradient(low = 'Orange', high = 'Red') +
+  scale_y_discrete(labels = function(x) {
+    month.abb[as.numeric(x)]
+  })
+
+p_temp <- gulf %>%
+  filter(month > 4 & month < 11) %>%
+  ggplot(mapping = aes(x = temp_c, y = mon, color = avg_temp, fill = avg_temp)) +
+  geom_density_ridges(rel_min_height = 0.01, alpha = 0.4) +
+  facet_wrap(~ year) +
+  labs(title = 'Temperature variation in Gulf of Mexico across years', x = 'Temperature (C)', y = 'Month', color = 'Avg Temp (C)', fill = 'Avg Temp (C)') +
+  scale_colour_gradient(low = 'Orange', high = 'Red') +
+  scale_fill_gradient(low = 'Orange', high = 'Red') +
+  scale_y_discrete(labels = function(x) {
+    month.abb[as.numeric(x)]
+  })
+
+p_pressure <- gulf %>%
+  filter(month > 4 & month < 11) %>%
+  filter(pressure > 940) %>%
+  ggplot(mapping = aes(x = pressure, y = mon, color = avg_pressure, fill = avg_pressure)) +
+  geom_density_ridges(rel_min_height = 0.01, alpha = 0.4) +
+  facet_wrap(~ year) +
+  labs(title = 'Pressure variation in Gulf of Mexico across years', x = 'Pressure (mb)', y = 'Month', color = 'Avg Pressure (mb)', fill = 'Avg Pressure (mb)') +
+  scale_colour_gradient(low = 'Purple', high = 'Blue') +
+  scale_fill_gradient(low = 'Purple', high = 'Blue') +
+  scale_y_discrete(labels = function(x) {
+    month.abb[as.numeric(x)]
+  }) +
+  guides(fill = FALSE, color = FALSE)
+
+
+```
+
+```{r formattable, message=FALSE}
+library(formattable)
+
+hurricanes <- storms %>%
+  dplyr::filter(type == 'Hurricane') %>%
+  dplyr::select(year, name) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(hurricanes = n())
+
+count_by_year <- storms %>%
+  dplyr::select(year, name) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(storms = n()) %>%
+  dplyr::inner_join(hurricanes) %>%
+  dplyr::mutate(severity = if_else(hurricanes >= 10, 'HIGH', if_else(hurricanes < 5, 'LOW', 'MEDIUM')))
+
+count_by_year
+
+df <- data.frame(
+  id = 1:10,
+  name = c("Bob", "Ashley", "James", "David", "Jenny", "Hans", "Leo", "John", "Emily", "Lee"), 
+  age = c(28, 27, 30, 28, 29, 29, 27, 27, 31, 30),
+  grade = c("C", "A", "A", "C", "B", "B", "B", "A", "C", "C"),
+  test1_score = c(8.9, 9.5, 9.6, 8.9, 9.1, 9.3, 9.3, 9.9, 8.5, 8.6),
+  test2_score = c(9.1, 9.1, 9.2, 9.1, 8.9, 8.5, 9.2, 9.3, 9.1, 8.8),
+  final_score = c(9, 9.3, 9.4, 9, 9, 8.9, 9.25, 9.6, 8.8, 8.7),
+  registered = c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE),
+  stringsAsFactors = FALSE)
+
+formattable(df, list(
+  age = color_tile("white", "orange"),
+  grade = formatter("span", style = x ~ ifelse(x == "A", style(color = "green", font.weight = "bold"), NA)),
+  area(col = c(test1_score, test2_score)) ~ normalize_bar("pink", 0.2),
+  final_score = formatter("span", style = x ~ style(color = ifelse(rank(-x) <= 3, "green", "gray")), x ~ sprintf("%.2f (rank: %02d)", x, rank(-x))),
+  registered = formatter("span", style = x ~ style(color = ifelse(x, "green", "red")), x ~ icontext(ifelse(x, "ok", "remove"), ifelse(x, "Yes", "No")))
+))
+
+names(count_by_year) = c('Year', 'Storms', 'Hurricanes', 'Severity')
+formattable(count_by_year, list(
+  area(col = `Storms`) ~ normalize_bar("pink", 0.2),
+  area(col = `Hurricanes`) ~ normalize_bar("orange", 0.2),
+  `Severity` = formatter("span", 
+              style = x ~ style(color = ifelse(x == 'HIGH', 'red', ifelse(x == 'LOW', 'green', 'orange'))),
+              x ~ icontext(ifelse(x == 'HIGH', "arrow-up", ifelse(x == 'LOW', 'arrow-down', 'arrow-right'))))
+))
+
+```
+
+
+```{r atmos_plot}
+atmos <- nasaweather::atmos
+
+atm <- atmos %>%
+  filter(lat < 40 & lat > 10) %>%
+  filter(long > -100 & long < -70) %>%
+    filter(year == 1995, month == 1)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+p2 <- ggplot(data = world) +
+  geom_sf()+
+  coord_sf(xlim = c(-132.15, -4.12), ylim = c(-32.65, 53.97), expand = FALSE)
+p2 + geom_contour(data = atm, mapping = aes(x = long, y = lat, z = temp, color = temp), alpha = 0.5)
+
+
+p2 + geom_point(data= atm, mapping = aes(x = long, y = lat, color = temp))
+
+```
+
+```{r}
+hurricanes <- storms %>%
+  dplyr::filter(type == 'Hurricane') %>%
+  dplyr::select(year, name) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(hurricanes = n())
+hurricanes
+
+count_by_year <- storms %>%
+  dplyr::select(year, name) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(storms = n()) %>%
+  dplyr::inner_join(hurricanes)
+count_by_year
+
+```
+
+
+```{r deploy}
+library(rsconnect)
+
+# rsconnect::setAccountInfo(name='balavigneswaran-kuppusamy', token='7D93B4DE39B851E2D9EC3B257CC1E6FA', secret='U8rIUuqeo1nCUwZ/PFU8IuSdz1rVrMy7RZcnl3lZ')
+rsconnect::deployApp(appDir = 'storms3', appName = 'nasa', appId = '796126', logLevel = 'normal')
+```
+

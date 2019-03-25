@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+name: Title
+class: center, middle
+count: false
+
+# Title
+
+---
+
+name: Agenda
+class: middle
+
+# Agenda
+
+1. Introduction
+2. Deep-dive
+3. ...
+
+---
+
+name: Intro
+
+# Introduction
+
+This slide talks about certain important topics.
+.right[This is important as well.]
+.right[![Puppy with ball](https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg)]
+
+---
+
+name: bg
+
+[//]: # (this is a comment)
+background-image: url(https://i2.wp.com/www.danieljenkinsacademy.com/wp-content/uploads/2017/11/fantastic-abstract-background-hd.jpg)
+
+# Page with background
+
+.center[how is this text looking]
+
+--
+
+- point 1
+
+???
+this is my secret note..
+
+--
+
+- point 2
+
+???
+this is my secret note for point 2..
+
+--
+
+- point 3
+---
+
+name: Unused
+exclude: true
+
+# Unused content
+
+This slide contains unused content & not being used anywhere..
+
+---
+
+name: Code
+
+Here is the R code
+
+```r
+ a <- 10
+ b <- a + 20
+*c <- paste('The total is', b)
+ print(c)
+```
+
+Here is the equivalent Java code..
+```java
+ public class c {
+	public static void main(String[] args) {
+	 int a = 10;
+	 int b = a + 20;
+*	 String c = "The total is " + b;
+	 System.out.println(c);
+	}
+ }
+```
+
+---
+
+name: Video
+count: false
+
+# Embedded video
+
+<!--
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5eLcHJLDlI8" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+
+<video width="560" height="420" controls>
+    <source src="https://www.youtube.com/embed/5eLcHJLDlI8" type="video/mp4">
+</video>
+-->
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({countIncrementalSlides: false, highlightLines: true});
+    </script>
+  </body>
+</html>

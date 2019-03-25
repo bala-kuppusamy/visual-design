@@ -1,0 +1,158 @@
+---
+title: "Visual Analytics - Design Contest"
+subtitle: "Dataset: nasaweather"
+author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)"
+date: "2019/03/25"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [default, rutgers, rutgers-fonts]
+    seal: true
+    nature:
+      countdown: 60000
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+name: domain-problem
+class: left, top
+
+# Domain Problem
+
+- Tropical cyclone paths & atmospheric measurements in the Atlantic Ocean, Caribbean Sea and Gulf of Mexico from 1995 to 2000.
+
+--
+
+- Research Question & Domain Problem
+
+--
+
+  - Observe past hurricane patterns for year-over-year comparison and identify safe shipping routes based on time of the year.
+
+--
+
+  - As a shipping routes planner, user needs to track & forecast storm patterns during hurricane seasons to identify safe shipping routes.
+
+--
+
+  - User needs to analyze the correlation between atmospheric temperature, pressure & storm patterns, if any.
+
+--
+
+<img src="https://s17346.pcdn.co/wp-content/uploads/2014/09/no-idea-nurse-gif.gif" alt="busy" width="250", height="175"/>
+
+---
+name: data-operation
+class: left, top
+
+# Data / Operation Abstraction
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE }
+library(dplyr)
+```
+
+
+```{r glimpse, message=FALSE, warning=FALSE}
+head(nasaweather::storms, 3)
+```
+
+--
+
+- Data types - Geo-spatial, temporal, numerical & categorical
+
+--
+
+- Identify storm season details for each year, & range of dates
+
+--
+
+- Identify storm details - name, max severity, max wind speed, whether it was active on any particular day
+
+--
+
+- Atmospheric temperature converted from Kelvin to Celcius
+
+--
+
+- Filter atmospheric data for the focussed geographical zone, & get monthly averages of temperature & air pressure.
+
+---
+name: interaction
+
+# Encoding / Interaction Design
+
+- Application to be responsive to user inputs and visually plot spatial information over map.
+
+--
+
+- View overall storm patterns for the selected year and time period. Visually identify active storms at any point in time.
+
+--
+
+- Track progress of storms on a daily basis & identify storm location & category.
+
+--
+
+- Pinpoint individual storms in the map & gather details about them.
+
+--
+
+- Visually compare year-over-year changes in storm wind speed & air pressure pattern.
+
+--
+
+- Compare monthly atmospheric temperatures across years to understand correlation between temperature & storm patterns.
+
+---
+name: dashboard
+
+# Visual Dashboard
+
+#### Libraries used
+
+- ggplot2, ggthemes, ggridges, dplyr, lubridate, sf, natural-earth map data
+
+--
+
+- leaflet, plotly, datatable, formattable
+
+--
+
+- shiny, shiny dashboard, shinythemes, xaringan, xaringan themes
+
+--
+
+<img src="https://www.houseofbots.com/images/news/4462/cover.png" alt="busy" width="300", height="205"/><font color="orange">
+<= User reaction we hope to avoid!! :)
+</font>
+
+--
+
+<br />
+https://balavigneswaran-kuppusamy.shinyapps.io/nasa/
+
+---
+name: next-steps
+
+#Next Steps / Future Work
+
+--
+
+- Use predictive algorithms to understand the correlation between different atmospheric variables and predict storm paths for future storms.
+
+--
+
+- Use additional data analysis techniques to explore the data and gain insights.
+
+--
+
+- Use better visualization options to create more responsive & faster visualizations.
+
+---
+name: thanks
+count: false
+class: center, middle
+
+# Thank You!
