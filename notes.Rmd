@@ -392,7 +392,6 @@ count_by_year
 ```{r deploy}
 library(rsconnect)
 
-# rsconnect::setAccountInfo(name='balavigneswaran-kuppusamy', token='7D93B4DE39B851E2D9EC3B257CC1E6FA', secret='U8rIUuqeo1nCUwZ/PFU8IuSdz1rVrMy7RZcnl3lZ')
-rsconnect::deployApp(appDir = 'storms3', appName = 'nasa', appId = '796126', logLevel = 'normal')
+rsconnect::deployApp(appDir = 'storms', appName = 'nasa', appId = '796126', logLevel = 'normal')
 ```
 
