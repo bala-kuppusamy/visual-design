@@ -73,6 +73,8 @@ library(viridis)
 glimpse(nasaweather::storms)
 # skim(nasaweather::storms)
 
+glimpse(nycflights13::flights)
+
 ```
 
 
