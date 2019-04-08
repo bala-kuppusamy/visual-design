@@ -5,41 +5,31 @@ library(visNetwork)
 library(shinydashboardPlus)
 
 dashboardPagePlus(
-  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "gears"),
+  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users"),
   sidebar = dashboardSidebar(disable = TRUE),
   body = dashboardBody(
     fluidRow(
       column(width = 9,
-         visNetworkOutput("network_proxy_nodes", height = "900px")
+        visNetworkOutput("network_proxy_nodes", height = "900px")
       ),
       column(width = 3)
     )
   ),
   rightsidebar = rightSidebar(width = 450, background = "dark",
-    rightSidebarTabContent(id = 1, icon = "desktop", active = TRUE,
-      widgetUserBox(title = "Nadia Carmichael", subtitle = "lead Developer", width = 12, type = 2,
-        src = "https://adminlte.io/themes/AdminLTE/dist/img/user7-128x128.jpg",
-        color = "yellow",
-        "Some text here!",
-        footer = "The footer here!"
-      ),
-      box(width = 12, status = "primary",
-        boxProfile(title = "Nina Mcintire", subtitle = "Software Engineer",
-          src = "https://adminlte.io/themes/AdminLTE/dist/img/user4-128x128.jpg",
-          boxProfileItemList(bordered = TRUE,
-            boxProfileItem(title = "Followers",description = 1322),
-            boxProfileItem(title = "Following",description = 543),
-            boxProfileItem(title = "Friends",description = 13287)
-          )
+    rightSidebarTabContent(id = 1, icon = "address-card", active = TRUE,
+      uiOutput(outputId = 'my_profile'),
+      conditionalPanel("output.selected == 'TRUE'",
+        box(width = 12, status = "primary",
+          uiOutput(outputId = 'selected_profile')
+        ),
+        box(width = 12, status = NULL,
+          appButton(url = "http://google.com", label = "Users", icon = "fa fa-users", enable_badge = TRUE, badgeColor = "purple", badgeLabel = 891),
+          appButton(label = "Edit", icon = "fa fa-edit", enable_badge = FALSE, badgeColor = NULL, badgeLabel = NULL),
+          appButton(label = "Likes", icon = "fa fa-heart-o", enable_badge = TRUE, badgeColor = "red",badgeLabel = 3)
         )
-      ),
-      box(width = 12, title = "App Buttons", status = NULL,
-        appButton(url = "http://google.com", label = "Users", icon = "fa fa-users", enable_badge = TRUE, badgeColor = "purple", badgeLabel = 891),
-        appButton(label = "Edit", icon = "fa fa-edit", enable_badge = FALSE, badgeColor = NULL, badgeLabel = NULL),
-        appButton(label = "Likes", icon = "fa fa-heart-o", enable_badge = TRUE, badgeColor = "red",badgeLabel = 3)
       )
     ),
-    rightSidebarTabContent(id = 2, title = "Tab 2",
+    rightSidebarTabContent(id = 2, icon = "history",
       timelineBlock(
         timelineEnd(color = "danger"),
         timelineLabel(2018, color = "teal"),
@@ -53,12 +43,12 @@ dashboardPagePlus(
         timelineStart(color = "gray")
       )
     ),
-    rightSidebarTabContent(id = 3, icon = "paint-brush",
-      box(title = "rightSidebarMenu", width = NULL,
+    rightSidebarTabContent(id = 3, icon = "calendar",
+      box(width = NULL,
         rightSidebarMenu(
           rightSidebarMenuItem(
             icon = menuIcon(name = "birthday-cake", color = "red"),
-            info = menuInfo(title = "Langdon s Birthday", description = "Will be 23 on April 24th")
+            info = menuInfo(title = "Langdon's Birthday", description = "Will be 23 on April 24th")
           ),
           rightSidebarMenuItem(
             icon = menuIcon(name = "user", color = "yellow"),

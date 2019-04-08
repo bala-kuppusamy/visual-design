@@ -59,12 +59,9 @@ add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
   name <- paste0('<br><b>', row$name.full,'</b>')
   # gender <- paste0('<br>Gender: <b>', row$gender.x,'</b>')
-  class <- paste0('<br>Class : <b>', row$class, ' (', row$id, ')</b>')
+  # class <- paste0('<br>Class : <b>', row$class, ' (', row$id, ')</b>')
 
-  # msg <- paste0('<input type="text" class="form-control form-control-sm" placeholder="Type message" id="chat_', row$id,'">')
-  # send <- paste0('<button type="button" class="btn btn-info btn-sm" id="go_', row$id, '">Send</button>')
-  # chat <- paste0('<br><form>',msg, send, '</form>')
-  paste0('<p>', img, name, class, '</p>')
+  paste0('<p>', img, name, '</p>')
 }
 
 # 05 --> execution of data merge
@@ -80,7 +77,7 @@ student_filtered <- student_merged %>%
 student_filtered$title <- sapply(1:nrow(student_filtered), function(x) add_title(student_filtered[x,]))
 # TEMP - TO BE REMOVED
 # student_filtered <- student_filtered %>%
-#   filter(id > 900)
+#   dplyr::filter(id > 900)
 
 # 06 --> getting nodes & edges data ready to render
 nodes <- student_filtered %>%
@@ -88,7 +85,7 @@ nodes <- student_filtered %>%
   dplyr::mutate(group = class, size = dplyr::if_else(id == my_id, 50, 20)) %>%
   dplyr::mutate(shape = 'circularImage', image = picture.thumbnail)
 
-edges <- contact_raw
+edges <- contact_info
 
 # demonstrating the usage of proxy for improved rendering performance.
 shinyServer(function(input, output) {
@@ -97,24 +94,42 @@ shinyServer(function(input, output) {
     visNetwork(nodes, edges) %>%
       visNodes(shadow = TRUE, shapeProperties = list(useBorderWithImage = TRUE), borderWidth = 5) %>%
       visLayout(randomSeed = 2) %>%
-      visOptions(manipulation = TRUE,
-                 nodesIdSelection = list(enabled = TRUE, style = 'visibility: hidden;')) %>%
+      visOptions(manipulation = TRUE, nodesIdSelection = list(enabled = TRUE, style = 'visibility: hidden;')) %>%
       visInteraction(hideEdgesOnDrag = TRUE) %>%
       visPhysics(stabilization = FALSE) %>%
       visEdges(smooth = FALSE)
   })
 
-  observeEvent(input$network_proxy_nodes_selected, {
-    print(paste0('Selected node 3 : ', input$network_proxy_nodes_selected))
+  output$my_profile <- renderUI({
+    my_profile <- student_filtered %>%
+      dplyr::filter(id == my_id)
+
+    widgetUserBox(title = my_profile$name.full, subtitle = my_profile$email, width = 12, type = 2, color = "yellow",
+      src = my_profile$picture.medium,
+      boxProfileItemList(bordered = TRUE,
+         boxProfileItem(title = "Class", description = paste0(my_profile$class, ' (', my_profile$id, ')')),
+         boxProfileItem(title = "# of Friends", description = my_profile$id)
+      ),
+      footer = 'I love my science classes...'
+    )
   })
 
-  # observe({
-  #   visNetworkProxy("network_proxy_nodes") %>%
-  #     visFocus(id = input$Focus, scale = 4)
-  # })
-  #
-  # observe({
-  #   visNetworkProxy("network_proxy_nodes") %>%
-  #     visNodes(color = input$color)
-  # })
+  output$selected <- renderText({
+    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != my_id
+  })
+
+  output$selected_profile <- renderUI({
+    selected_profile <- student_filtered %>%
+      dplyr::filter(id == input$network_proxy_nodes_selected)
+
+    boxProfile(title = selected_profile$name.full, subtitle = selected_profile$email,
+      src = selected_profile$picture.medium,
+     boxProfileItemList(bordered = TRUE,
+        boxProfileItem(title = "Class", description = paste0(selected_profile$class, ' (', selected_profile$id, ')')),
+        boxProfileItem(title = "# of Friends", description = selected_profile$id)
+     )
+    )
+  })
+
+  outputOptions(output, "selected", suspendWhenHidden = FALSE)
 })
