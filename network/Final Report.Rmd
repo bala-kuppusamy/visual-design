@@ -1,0 +1,54 @@
+---
+title: "High School Friendship Network Final Report"
+author: 'Team 4: Balavigneswara Kuppusamy, Minglan Ye, Jiamin Lei'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Section 1: Introduction
+
+A high school in Marseille, France has conducted an analysis on historical data studying the influence of different factors on academic performance. The study observes student behavior and rates each student's peer connections on a scale of 1 to 10. Results show that receiving a high score on peer connections is highly correlated with not only academic excellence of the student while in school, but also superior development after graduation. 
+
+In order to enhance frequent communication among the student body, the high school principal decides to employ data scientists to create an online social platform. The purpose of this platform is to create a convenient environment for students to quickly navigate through connections between fellow peers and identify ways of contact. A successful platform not only needs to be quickly accessible to students, but also encourages academic discussions among student groups.
+
+
+## Section 2: Data/Operation Abstraction Design
+
+The data scientist team compiled two datasets for the purpose of this project. Compiled after a 5-day survey, the "Contacts" dataset entails contacts of the students of nine classes. There are a total of 3 variables, where variables 1 and 2 record the respective ID of each student and variable 3 is the duration of contact on a level of 1-4. A clip of dataset is copied below:
+
+```{r contacts, echo=FALSE, warning=FALSE, message=FALSE}
+#install.packages(RCurl)
+#install.packages(bitops)
+library(RCurl)
+library(bitops)
+library(dplyr)
+x <- getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/data/high-school/Contact-diaries-network_data_2013.csv")
+y <- read.csv(text = x)
+glimpse(y)
+```
+
+The "metadata" dataset contains a total of 3 variables: student ID, class ID, and gender:
+```{r students, echo=FALSE, warning=FALSE, message=FALSE}
+#install.packages(RCurl)
+#install.packages(bitops)
+library(RCurl)
+library(bitops)
+library(dplyr)
+x <- getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/data/high-school/metadata_2013.txt")
+students <- read.table(text=x)
+glimpse(students)
+```
+
+
+## Section 3: Encoding/Interaction Design
+
+We want our users to quickly navigate through peer networks. A student can input name in the search bar and view his or her standing in the social network. The social connections diagram is color codes by class. The strength of connection between people can also be identified by the thickness of lines between nodes. The student can not only see how fellow classmates are linked, he or her can also see how someone is linked to students in another class, if interested. Students can also use the messaging function to anyone they are interested in the network. 
+
+This would be a convenient way for new students to start connecting with their fellow classmates and recognize new faces by profile pictures.  
+
+## Section 4: Algorithmic Design
+
+## Section 5: User Evaluation
+
