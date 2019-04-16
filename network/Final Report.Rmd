@@ -14,6 +14,8 @@ A high school in Marseille, France has conducted an analysis on historical data 
 In order to enhance frequent communication among the student body, the high school principal decides to employ data scientists to create an online social platform. The purpose of this platform is to create a convenient environment for students to quickly navigate through connections between fellow peers and identify ways of contact. A successful platform not only needs to be quickly accessible to students, but also encourages academic discussions among student groups.
 
 
+# Added by Bala.
+
 ## Section 2: Data/Operation Abstraction Design
 
 The data scientist team compiled two datasets for the purpose of this project. Compiled after a 5-day survey, the "Contacts" dataset entails contacts of the students of nine classes. There are a total of 3 variables, where variables 1 and 2 record the respective ID of each student and variable 3 is the duration of contact on a level of 1-4. A clip of dataset is copied below:
