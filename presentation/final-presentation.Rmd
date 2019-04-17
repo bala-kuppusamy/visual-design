@@ -1,5 +1,5 @@
 ---
-title: "Final presentation group 4"
+title: "presentation group 4"
 subtitle: "Dataset: highschool network"
 author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)"
 date: "2019/03/25"
