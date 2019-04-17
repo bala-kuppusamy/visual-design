@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Final presentation group 4</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rutgers.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/rutgers-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Final presentation group 4
+## Dataset: highschool network
+### Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)
+### 2019/03/25
+
+---
+
+
+name: domain-problem
+class: left, top
+
+# Domain Problem
+
+- Tropical cyclone paths &amp; atmospheric measurements in the Atlantic Ocean, Caribbean Sea and Gulf of Mexico from 1995 to 2000.
+
+--
+
+- Research Question &amp; Domain Problem
+
+--
+
+  - Observe past hurricane patterns for year-over-year comparison and identify safe shipping routes based on time of the year.
+
+--
+
+  - As a shipping routes planner, user needs to track &amp; forecast storm patterns during hurricane seasons to identify safe shipping routes.
+
+--
+
+  - User needs to analyze the correlation between atmospheric temperature, pressure &amp; storm patterns, if any.
+
+--
+
+&lt;img src="https://s17346.pcdn.co/wp-content/uploads/2014/09/no-idea-nurse-gif.gif" alt="busy" width="250", height="175"/&gt;
+
+---
+name: data-operation
+class: left, top
+
+# Data / Operation Abstraction
+
+
+
+
+
+```r
+head(nasaweather::storms, 3)
+```
+
+```
+## # A tibble: 3 x 11
+##   name    year month   day  hour   lat  long pressure  wind type    seasday
+##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;     &lt;int&gt;
+## 1 Allis~  1995     6     3     0  17.4 -84.3     1005    30 Tropic~       3
+## 2 Allis~  1995     6     3     6  18.3 -84.9     1004    30 Tropic~       3
+## 3 Allis~  1995     6     3    12  19.3 -85.7     1003    35 Tropic~       3
+```
+
+--
+
+- Data types - Geo-spatial, temporal, numerical &amp; categorical
+
+--
+
+- Identify storm season details for each year, &amp; range of dates
+
+--
+
+- Identify storm details - name, max severity, max wind speed, whether it was active on any particular day
+
+--
+
+- Atmospheric temperature converted from Kelvin to Celcius
+
+--
+
+- Filter atmospheric data for the focussed geographical zone, &amp; get monthly averages of temperature &amp; air pressure.
+
+---
+name: interaction
+
+# Encoding / Interaction Design
+
+- Application to be responsive to user inputs and visually plot spatial information over map.
+
+--
+
+- View overall storm patterns for the selected year and time period. Visually identify active storms at any point in time.
+
+--
+
+- Track progress of storms on a daily basis &amp; identify storm location &amp; category.
+
+--
+
+- Pinpoint individual storms in the map &amp; gather details about them.
+
+--
+
+- Visually compare year-over-year changes in storm wind speed &amp; air pressure pattern.
+
+--
+
+- Compare monthly atmospheric temperatures across years to understand correlation between temperature &amp; storm patterns.
+
+---
+name: dashboard
+
+# Visual Dashboard
+
+#### Libraries used
+
+- ggplot2, ggthemes, ggridges, dplyr, lubridate, sf, natural-earth map data
+
+--
+
+- leaflet, plotly, datatable, formattable
+
+--
+
+- shiny, shiny dashboard, shinythemes, xaringan, xaringan themes
+
+--
+
+&lt;img src="https://www.houseofbots.com/images/news/4462/cover.png" alt="busy" width="300", height="205"/&gt;&lt;font color="orange"&gt;
+&lt;= User reaction we hope to avoid!! :)
+&lt;/font&gt;
+
+--
+
+&lt;br /&gt;
+https://balavigneswaran-kuppusamy.shinyapps.io/nasa/
+
+---
+name: next-steps
+
+#Next Steps / Future Work
+
+--
+
+- Use predictive algorithms to understand the correlation between different atmospheric variables and predict storm paths for future storms.
+
+--
+
+- Use additional data analysis techniques to explore the data and gain insights.
+
+--
+
+- Use better visualization options to create more responsive &amp; faster visualizations.
+
+---
+name: thanks
+count: false
+class: center, middle
+
+# Thank You!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(60000);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
