@@ -1,12 +1,8 @@
 ---
 output:
-  html_document: default
   xaringan::moon_reader: default
+  html_document: default
 ---
-
-```{r}
-remotes::install_github('yihui/xaringan')
-```
 
 ---
 title: "presentation group 4"
