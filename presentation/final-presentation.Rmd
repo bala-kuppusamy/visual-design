@@ -1,4 +1,14 @@
 ---
+output:
+  html_document: default
+  xaringan::moon_reader: default
+---
+
+```{r}
+remotes::install_github('yihui/xaringan')
+```
+
+---
 title: "presentation group 4"
 subtitle: "Dataset: highschool network"
 author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)"
