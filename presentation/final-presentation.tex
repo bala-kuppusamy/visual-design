@@ -1,0 +1,232 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Final Presentation Group 4},
+            pdfauthor={Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Final Presentation Group 4}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \subtitle{Dataset: highschool network}
+  \author{Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{2019/03/25}
+
+
+\begin{document}
+\maketitle
+
+name: domain-problem class: left, top
+
+\section{Domain Problem}\label{domain-problem}
+
+\begin{itemize}
+\item
+\end{itemize}
+
+--Datasets contains frendship between students in high school in
+December 2013 through serval techiniques.
+
+\begin{itemize}
+\tightlist
+\item
+  Research Question \& Domain Problem
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Observe which individual is the most popular students in this network.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  As a shipping routes planner, user needs to track \& forecast storm
+  patterns during hurricane seasons to identify safe shipping routes.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  User needs to analyze the correlation between atmospheric temperature,
+  pressure \& storm patterns, if any.
+\end{itemize}
+
+--
+
+name: interaction
+
+\section{Encoding / Interaction
+Design}\label{encoding-interaction-design}
+
+\begin{itemize}
+\tightlist
+\item
+  Application to be responsive to user inputs and visually plot spatial
+  information over map.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  View overall storm patterns for the selected year and time period.
+  Visually identify active storms at any point in time.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Track progress of storms on a daily basis \& identify storm location
+  \& category.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Pinpoint individual storms in the map \& gather details about them.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Visually compare year-over-year changes in storm wind speed \& air
+  pressure pattern.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Compare monthly atmospheric temperatures across years to understand
+  correlation between temperature \& storm patterns.
+\end{itemize}
+
+name: next-steps
+
+\section{Next Steps / Future Work}\label{next-steps-future-work}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Use predictive algorithms to understand the correlation between
+  different atmospheric variables and predict storm paths for future
+  storms.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Use additional data analysis techniques to explore the data and gain
+  insights.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Use better visualization options to create more responsive \& faster
+  visualizations.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+name: thanks count: false class: center, middle
+
+\section{Thank You!}\label{thank-you}
+
+
+\end{document}

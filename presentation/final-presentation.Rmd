@@ -1,11 +1,12 @@
 ---
 output:
-  xaringan::moon_reader: default
   html_document: default
+  pdf_document: default
+  xaringan::moon_reader: default
 ---
 
 ---
-title: "presentation group 4"
+title: "Final Presentation Group 4"
 subtitle: "Dataset: highschool network"
 author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)"
 date: "2019/03/25"
@@ -27,27 +28,28 @@ class: left, top
 
 # Domain Problem
 
-- Tropical cyclone paths & atmospheric measurements in the Atlantic Ocean, Caribbean Sea and Gulf of Mexico from 1995 to 2000.
+- 
 
---
+--Datasets contains frendship between students in high school in December 2013 through serval techiniques.
+
 
 - Research Question & Domain Problem
 
 --
 
-  - Observe past hurricane patterns for year-over-year comparison and identify safe shipping routes based on time of the year.
+  - Observe which individual is the most popular students in this network.
 
 --
 
-  - As a shipping routes planner, user needs to track & forecast storm patterns during hurricane seasons to identify safe shipping routes.
+  - As a freshment student could utilize this network to get to know the classmates so that to have a better school experience especially in the American Classroom set up.
+  
+--
+
+  - User needs to analyze the relationship between each individual through what class they are taking, who are they friend with.
 
 --
 
-  - User needs to analyze the correlation between atmospheric temperature, pressure & storm patterns, if any.
-
---
-
-<img src="https://s17346.pcdn.co/wp-content/uploads/2014/09/no-idea-nurse-gif.gif" alt="busy" width="250", height="175"/>
+<img src="https://i.pinimg.com/originals/03/97/b0/0397b0945e30486a5f5888def7153aea.jpg" alt="busy" width="250", height="175"/>
 
 ---
 name: data-operation
