@@ -1,26 +1,21 @@
 ---
 output:
   html_document: default
-  pdf_document: default
   xaringan::moon_reader: default
+  pdf_document: default
 ---
+name: domain-problem
+class: middle, middle
+
+#Final Presentation Group 4
+
+##Bala Kuppusamy, Minglan Ye, Jiamin Lei
+###(Social Butterfly)
+
+###Date: 2019/04/20
 
 ---
-title: "Final Presentation Group 4"
-subtitle: "Dataset: highschool network"
-author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei (Storm Chasers)"
-date: "2019/03/25"
-output:
-  xaringan::moon_reader:
-    lib_dir: libs
-    chakra: libs/remark-latest.min.js
-    css: [default, metropolis, metropolis-fonts]
-    seal: true
-    nature:
-      countdown: 60000
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
+<img src="https://cdn-images-1.medium.com/max/1000/1*IWxOuXB3csN4_na6SSm_Rg.gif" alt="busy" width="850", height="550"/>
 ---
 
 name: domain-problem
@@ -30,7 +25,7 @@ class: left, top
 
 - 
 
---Datasets contains frendship between students in high school in December 2013 through serval techiniques.
+Datasets contains frendship between students in high school in December 2013 through serval techiniques.
 
 
 - Research Question & Domain Problem
@@ -49,7 +44,9 @@ class: left, top
 
 --
 
-<img src="https://i.pinimg.com/originals/03/97/b0/0397b0945e30486a5f5888def7153aea.jpg" alt="busy" width="250", height="175"/>
+<img src="https://thumbs.gfycat.com/InsidiousPhonyBlackbear-size_restricted.gif" alt="busy" width="250", height="175"/><font color="orange">
+<= My first day of school! :)
+</font>
 
 ---
 name: data-operation
@@ -61,58 +58,73 @@ class: left, top
 library(dplyr)
 ```
 
+--
 
-```{r glimpse, message=FALSE, warning=FALSE}
-head(nasaweather::storms, 3)
-```
+- Data types - numerical & categorical
 
 --
 
-- Data types - Geo-spatial, temporal, numerical & categorical
+- Identify relationship between students and what class they had in common.
 
 --
 
-- Identify storm season details for each year, & range of dates
+- Identify network details - name of student, class, friends, whether they have friends in common and who can they be introduced through individuals.
 
 --
 
-- Identify storm details - name, max severity, max wind speed, whether it was active on any particular day
+- Add name for each student ID and added picture of each student by pulling the information from randomuser.me
 
 --
 
-- Atmospheric temperature converted from Kelvin to Celcius
-
---
-
-- Filter atmospheric data for the focussed geographical zone, & get monthly averages of temperature & air pressure.
+- Filter freind network data to see who can we be introduced to by having the same class.
 
 ---
 name: interaction
 
 # Encoding / Interaction Design
 
-- Application to be responsive to user inputs and visually plot spatial information over map.
+- Application to be responsive to user inputs and visually plot the highschool network information. 
 
 --
 
-- View overall storm patterns for the selected year and time period. Visually identify active storms at any point in time.
+- View overall network interactivly by chosing differernt main person as starting point.
 
 --
 
-- Track progress of storms on a daily basis & identify storm location & category.
+- Allow user to see the common friend and build relationship by adding or deleting profile on the app.
 
 --
 
-- Pinpoint individual storms in the map & gather details about them.
+- Show additional individual information on the silderpanel which could also allow user to direct message, email individual.
 
 --
 
-- Visually compare year-over-year changes in storm wind speed & air pressure pattern.
+---
+name:Goal & Objectives
+
+#Goal & Objectives
 
 --
 
-- Compare monthly atmospheric temperatures across years to understand correlation between temperature & storm patterns.
+- Meet new people/friends/future date
 
+--
+
+- Learn more about other students 
+
+--
+- New skills, inspiration,collaboration on school projects
+
+--
+
+- Food/encounter more cuisines and culture
+
+--
+
+- Networking
+
+<img src="https://thumbs.gfycat.com/SelfreliantAdoredBobcat-max-1mb.gif" alt="busy" width="250", height="250"/>
+---
 ---
 name: dashboard
 
@@ -132,8 +144,8 @@ name: dashboard
 
 --
 
-<img src="https://www.houseofbots.com/images/news/4462/cover.png" alt="busy" width="300", height="205"/><font color="orange">
-<= User reaction we hope to avoid!! :)
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe38u4RceSV0HvaisvABYXndQYDzXbH6hOwloChDFpYc5LwpZj" alt="busy" width="300", height="205"/><font color="orange">
+<= Networking is hard! :)
 </font>
 
 --
@@ -157,6 +169,9 @@ name: next-steps
 --
 
 - Use better visualization options to create more responsive & faster visualizations.
+
+---
+<img src="https://media.giphy.com/media/MiapFHASKG1Us/giphy.gif" alt="busy" width="850", height="550"/>
 
 ---
 name: thanks
