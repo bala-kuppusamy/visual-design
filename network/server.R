@@ -6,9 +6,9 @@ library(dplyr)
 library(stringr)
 library(readr)
 
-## data-prep - START
+## data-preparation - START
 
-# 01 --> constants
+# 01 --> define constants
 folder <- './data/high-school/'
 contacts_file <- paste0(folder, 'Contact-diaries-network_data_2013.csv')
 students_file <- paste0(folder, 'metadata_2013.txt')
@@ -58,9 +58,6 @@ merge_profiles <- function(student_info) {
 add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
   name <- paste0('<br><b>', row$name.full,'</b>')
-  # gender <- paste0('<br>Gender: <b>', row$gender.x,'</b>')
-  # class <- paste0('<br>Class : <b>', row$class, ' (', row$id, ')</b>')
-
   paste0('<p>', img, name, '</p>')
 }
 
@@ -76,10 +73,10 @@ student_filtered <- student_merged %>%
 
 student_filtered$title <- sapply(1:nrow(student_filtered), function(x) add_title(student_filtered[x,]))
 # TEMP - TO BE REMOVED
-# student_filtered <- student_filtered %>%
-#   dplyr::filter(id > 900)
+student_filtered <- student_filtered %>%
+  dplyr::filter(id > 900)
 
-# 06 --> getting nodes & edges data ready to render
+# 06 --> getting nodes & edges data ready for rendering
 nodes <- student_filtered %>%
   dplyr::mutate(label = name.full) %>%
   dplyr::mutate(group = class, size = dplyr::if_else(id == my_id, 50, 20)) %>%
@@ -87,7 +84,9 @@ nodes <- student_filtered %>%
 
 edges <- contact_info
 
-# demonstrating the usage of proxy for improved rendering performance.
+## data-preparation - END
+
+# using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
   output$network_proxy_nodes <- renderVisNetwork({
     print('Drawing..')
