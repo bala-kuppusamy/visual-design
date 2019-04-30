@@ -71,7 +71,7 @@ student_filtered <- student_filtered %>%
 # 06 --> getting nodes & edges data ready for rendering
 nodes <- student_filtered %>%
   dplyr::mutate(label = name.full) %>%
-  dplyr::mutate(group = class, size = dplyr::if_else(id == my_id, 50, 20)) %>%
+  dplyr::mutate(group = class, size_default = dplyr::if_else(id == my_id, 50, 20)) %>%
   dplyr::mutate(shape = 'circularImage', image = picture.thumbnail)
 
 edges <- contact_info

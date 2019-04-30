@@ -19,14 +19,7 @@ dashboardPagePlus(
     rightSidebarTabContent(id = 1, icon = "address-card", active = TRUE,
       uiOutput(outputId = 'my_profile'),
       conditionalPanel("output.selected == 'TRUE'",
-        box(width = 12, status = "primary",
-          uiOutput(outputId = 'selected_profile')
-        ),
-        box(width = 12, status = NULL,
-          appButton(url = "http://google.com", label = "Users", icon = "fa fa-users", enable_badge = TRUE, badgeColor = "purple", badgeLabel = 891),
-          appButton(label = "Edit", icon = "fa fa-edit", enable_badge = FALSE, badgeColor = NULL, badgeLabel = NULL),
-          appButton(label = "Likes", icon = "fa fa-heart-o", enable_badge = TRUE, badgeColor = "red",badgeLabel = 3)
-        )
+        uiOutput(outputId = 'selected_profile')
       )
     ),
     rightSidebarTabContent(id = 2, icon = "history",
