@@ -1,7 +1,7 @@
 ---
 output:
-  html_document: default
   xaringan::moon_reader: default
+  html_document: default
   pdf_document: default
 ---
 name: domain-problem
@@ -26,7 +26,7 @@ class: left, top
 - 
 
 Datasets contains frendship between students in high school in December 2013 through serval techiniques.
-
+--
 
 - Research Question & Domain Problem
 
@@ -36,7 +36,7 @@ Datasets contains frendship between students in high school in December 2013 thr
 
 --
 
-  - As a freshment student could utilize this network to get to know the classmates so that to have a better school experience especially in the American Classroom set up.
+  - As a freshment or transfer studnet who is new to this new school, they could utilize this network to get to know the classmates so that to have a better school experience especially in the American Classroom set up.
   
 --
 
@@ -53,10 +53,6 @@ name: data-operation
 class: left, top
 
 # Data / Operation Abstraction
-
-```{r setup, include=FALSE, message=FALSE, warning=FALSE }
-library(dplyr)
-```
 
 --
 
@@ -121,9 +117,9 @@ name:Goal & Objectives
 
 --
 
-- Networking
+- Networking aka build relationships
 
-<img src="https://thumbs.gfycat.com/SelfreliantAdoredBobcat-max-1mb.gif" alt="busy" width="250", height="250"/>
+<img src="https://media.giphy.com/media/3oKIPpFhwsMNrRIjN6/giphy.gif" alt="busy" width="800", height="250"/>
 ---
 ---
 name: dashboard
@@ -132,26 +128,24 @@ name: dashboard
 
 #### Libraries used
 
-- ggplot2, ggthemes, ggridges, dplyr, lubridate, sf, natural-earth map data
+--
+
+- jsonlite,curl,dplyr,stringr,readr,visNetwork
 
 --
 
-- leaflet, plotly, datatable, formattable
+- shiny, shiny widgets, shiny dashboard, shiny dashboard plus, shinythemes, xaringan, xaringan themes
 
 --
 
-- shiny, shiny dashboard, shinythemes, xaringan, xaringan themes
-
---
-
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe38u4RceSV0HvaisvABYXndQYDzXbH6hOwloChDFpYc5LwpZj" alt="busy" width="300", height="205"/><font color="orange">
+<img src="https://media.tenor.com/images/172b78aa15e620b11fe309828af3c757/tenor.gif" alt="busy" width="300", height="205"/><font color="orange">
 <= Networking is hard! :)
 </font>
 
 --
 
 <br />
-https://balavigneswaran-kuppusamy.shinyapps.io/nasa/
+https://balavigneswaran-kuppusamy.shinyapps.io/network/
 
 ---
 name: next-steps
