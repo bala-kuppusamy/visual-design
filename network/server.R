@@ -14,15 +14,20 @@ source(file = 'igraph-data.R')
 shinyServer(function(input, output) {
 
   sizeOption <- reactive({
-    'DEFAULT'
+    if(input$popularity) 'DEGREE' else 'DEFAULT'
+  })
+
+  loginId <- reactive({
+    if(!is.null(input$login_id) && !is.na(input$login_id)) input$login_id else my_id
   })
 
   output$network_proxy_nodes <- renderVisNetwork({
-    print('Drawing..')
     v_sizeOption <- sizeOption()
+    v_loginId <- loginId()
 
     nodes <- nodes %>%
-      mutate(size = if_else(v_sizeOption == 'DEGREE', size_degree, size_default))
+      dplyr::mutate(size_default = dplyr::if_else(id == v_loginId, 50, 20)) %>%
+      dplyr::mutate(size = dplyr::if_else(v_sizeOption == 'DEGREE', size_degree, size_default))
 
     visNetwork(nodes, edges) %>%
       visNodes(shadow = TRUE, shapeProperties = list(useBorderWithImage = TRUE), borderWidth = 5) %>%
@@ -33,21 +38,33 @@ shinyServer(function(input, output) {
       visEdges(smooth = FALSE)
   })
 
-  self_profile_ui <- callModule(userProfile, 'profile', my_id, TRUE, student_filtered, nodes)
-
   output$my_profile <- renderUI({
+    v_loginId <- loginId()
+
+    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, TRUE, student_filtered, nodes)
     self_profile_ui()
   })
 
   output$selected <- renderText({
-    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != my_id
+    v_loginId <- loginId()
+
+    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != v_loginId
   })
 
   output$selected_profile <- renderUI({
-    id <- input$network_proxy_nodes_selected
-    other_profile_ui <- callModule(userProfile, 'profile', id, FALSE, student_filtered, nodes)
+    selected_id <- input$network_proxy_nodes_selected
+    other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, student_filtered, nodes)
     other_profile_ui()
   })
 
-  outputOptions(output, "selected", suspendWhenHidden = FALSE)
+  output$user_list <- renderUI({
+    names <- nodes %>%
+      select(id, name.full)
+
+    names_options <- setNames(as.character(names$id), names$name.full)
+    selectInput(inputId = "login_id", label = "", selected = my_id, choices = names_options)
+  })
+
+  shiny::outputOptions(output, "selected", suspendWhenHidden = FALSE)
+  shiny::outputOptions(output, "user_list", suspendWhenHidden = FALSE)
 })

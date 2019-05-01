@@ -1,8 +1,7 @@
 
 box_items <- function(profile) {
   boxProfileItemList(bordered = TRUE,
-     boxProfileItem(title = "Class", description = profile$class),
-     boxProfileItem(title = "ID", description = profile$id)
+     boxProfileItem(title = "Class", description = paste0(profile$class, ' (', profile$id, ')'))
   )
 }
 
@@ -17,22 +16,6 @@ regular_box <- function(profile) {
   boxProfile(title = profile$name.full, subtitle = profile$email, src = profile$picture.medium,
     box_items(profile)
   )
-}
-
-
-get_color <- function(value) {
-  if(is.na(value)) {
-    color <- 'purple'
-  } else if(value <= 1) {
-    color <- 'red'
-  } else if(value == 2) {
-    color <- 'orange'
-  } else if(value == 3) {
-    color <- 'green'
-  } else {
-    color <- 'blue'
-  }
-  color
 }
 
 userProfile <- function(input, output, session, user_id, is_self, profiles, nodes) {
@@ -55,6 +38,20 @@ userProfile <- function(input, output, session, user_id, is_self, profiles, node
         )
     )
   })
-
   return (text)
 }
+
+# get_color <- function(value) {
+#   if(is.na(value)) {
+#     color <- 'purple'
+#   } else if(value <= 1) {
+#     color <- 'red'
+#   } else if(value == 2) {
+#     color <- 'orange'
+#   } else if(value == 3) {
+#     color <- 'green'
+#   } else {
+#     color <- 'blue'
+#   }
+#   color
+# }

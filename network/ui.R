@@ -5,7 +5,13 @@ library(visNetwork)
 library(shinydashboardPlus)
 
 dashboardPagePlus(
-  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users"),
+  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users",
+            left_menu = tagList(
+              dropdownBlock(id = "view_options", title = "Change View", icon = icon("gears"),
+                prettySwitch(inputId = "popularity", label = "Show by popularity", fill = TRUE, status = "primary")),
+              dropdownBlock(id = "change_user", title = "Login as", icon = icon("gears"),
+                uiOutput(outputId = 'user_list')
+                ))),
   sidebar = dashboardSidebar(disable = TRUE),
   body = dashboardBody(
     fluidRow(
@@ -22,7 +28,7 @@ dashboardPagePlus(
         uiOutput(outputId = 'selected_profile')
       )
     ),
-    rightSidebarTabContent(id = 2, icon = "history",
+    rightSidebarTabContent(id = 2, icon = "heart",
       timelineBlock(
         timelineEnd(color = "danger"),
         timelineLabel(2018, color = "teal"),
@@ -34,20 +40,6 @@ dashboardPagePlus(
           timelineItemMedia(src = "http://placehold.it/150x100")
         ),
         timelineStart(color = "gray")
-      )
-    ),
-    rightSidebarTabContent(id = 3, icon = "calendar",
-      box(width = NULL,
-        rightSidebarMenu(
-          rightSidebarMenuItem(
-            icon = menuIcon(name = "birthday-cake", color = "red"),
-            info = menuInfo(title = "Langdon's Birthday", description = "Will be 23 on April 24th")
-          ),
-          rightSidebarMenuItem(
-            icon = menuIcon(name = "user", color = "yellow"),
-            info = menuInfo(title = "Frodo Updated His Profile", description = "New phone +1(800)555-1234")
-          )
-        )
       )
     )
   )
