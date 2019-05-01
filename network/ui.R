@@ -15,7 +15,7 @@ dashboardPagePlus(
       column(width = 3)
     )
   ),
-  rightsidebar = rightSidebar(width = 450, background = "dark",
+  rightsidebar = rightSidebar(width = 500, background = "dark",
     rightSidebarTabContent(id = 1, icon = "address-card", active = TRUE,
       uiOutput(outputId = 'my_profile'),
       conditionalPanel("output.selected == 'TRUE'",
