@@ -5,52 +5,66 @@ library(curl)
 library(dplyr)
 library(stringr)
 library(readr)
+library(igraph)
 
 source(file = 'data.R')
+source(file = 'igraph-data.R')
 
 # using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
+
+  sizeOption <- reactive({
+    if(input$popularity) 'DEGREE' else 'DEFAULT'
+  })
+
+  loginId <- reactive({
+    if(!is.null(input$login_id) && !is.na(input$login_id)) input$login_id else my_id
+  })
+
   output$network_proxy_nodes <- renderVisNetwork({
-    print('Drawing..')
+    v_sizeOption <- sizeOption()
+    v_loginId <- loginId()
+
+    nodes <- nodes %>%
+      dplyr::mutate(size_default = dplyr::if_else(id == v_loginId, 50, 20)) %>%
+      dplyr::mutate(size = dplyr::if_else(v_sizeOption == 'DEGREE', size_degree, size_default))
+
     visNetwork(nodes, edges) %>%
       visNodes(shadow = TRUE, shapeProperties = list(useBorderWithImage = TRUE), borderWidth = 5) %>%
       visLayout(randomSeed = 2) %>%
-      visOptions(manipulation = TRUE, nodesIdSelection = list(enabled = TRUE, style = 'visibility: hidden;')) %>%
+      visOptions(manipulation = FALSE, nodesIdSelection = list(enabled = TRUE, style = 'visibility: hidden;')) %>%
       visInteraction(hideEdgesOnDrag = TRUE) %>%
       visPhysics(stabilization = FALSE) %>%
       visEdges(smooth = FALSE)
   })
 
   output$my_profile <- renderUI({
-    my_profile <- student_filtered %>%
-      dplyr::filter(id == my_id)
+    v_loginId <- loginId()
 
-    widgetUserBox(title = my_profile$name.full, subtitle = my_profile$email, width = 12, type = 2, color = "yellow",
-      src = my_profile$picture.medium,
-      boxProfileItemList(bordered = TRUE,
-         boxProfileItem(title = "Class", description = paste0(my_profile$class, ' (', my_profile$id, ')')),
-         boxProfileItem(title = "# of Friends", description = my_profile$id)
-      ),
-      footer = 'I love my science classes...'
-    )
+    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, TRUE, student_filtered, nodes)
+    self_profile_ui()
   })
 
   output$selected <- renderText({
-    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != my_id
+    v_loginId <- loginId()
+
+    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != v_loginId
   })
 
   output$selected_profile <- renderUI({
-    selected_profile <- student_filtered %>%
-      dplyr::filter(id == input$network_proxy_nodes_selected)
-
-    boxProfile(title = selected_profile$name.full, subtitle = selected_profile$email,
-      src = selected_profile$picture.medium,
-     boxProfileItemList(bordered = TRUE,
-        boxProfileItem(title = "Class", description = paste0(selected_profile$class, ' (', selected_profile$id, ')')),
-        boxProfileItem(title = "# of Friends", description = selected_profile$id)
-     )
-    )
+    selected_id <- input$network_proxy_nodes_selected
+    other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, student_filtered, nodes)
+    other_profile_ui()
   })
 
-  outputOptions(output, "selected", suspendWhenHidden = FALSE)
+  output$user_list <- renderUI({
+    names <- nodes %>%
+      select(id, name.full)
+
+    names_options <- setNames(as.character(names$id), names$name.full)
+    selectInput(inputId = "login_id", label = "", selected = my_id, choices = names_options)
+  })
+
+  shiny::outputOptions(output, "selected", suspendWhenHidden = FALSE)
+  shiny::outputOptions(output, "user_list", suspendWhenHidden = FALSE)
 })

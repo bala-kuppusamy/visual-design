@@ -5,7 +5,13 @@ library(visNetwork)
 library(shinydashboardPlus)
 
 dashboardPagePlus(
-  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users"),
+  header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users",
+            left_menu = tagList(
+              dropdownBlock(id = "view_options", title = "Change View", icon = icon("gears"),
+                prettySwitch(inputId = "popularity", label = "Show by popularity", fill = TRUE, status = "primary")),
+              dropdownBlock(id = "change_user", title = "Login as", icon = icon("gears"),
+                uiOutput(outputId = 'user_list')
+                ))),
   sidebar = dashboardSidebar(disable = TRUE),
   body = dashboardBody(
     fluidRow(
@@ -15,21 +21,14 @@ dashboardPagePlus(
       column(width = 3)
     )
   ),
-  rightsidebar = rightSidebar(width = 450, background = "dark",
+  rightsidebar = rightSidebar(width = 500, background = "dark",
     rightSidebarTabContent(id = 1, icon = "address-card", active = TRUE,
       uiOutput(outputId = 'my_profile'),
       conditionalPanel("output.selected == 'TRUE'",
-        box(width = 12, status = "primary",
-          uiOutput(outputId = 'selected_profile')
-        ),
-        box(width = 12, status = NULL,
-          appButton(url = "http://google.com", label = "Users", icon = "fa fa-users", enable_badge = TRUE, badgeColor = "purple", badgeLabel = 891),
-          appButton(label = "Edit", icon = "fa fa-edit", enable_badge = FALSE, badgeColor = NULL, badgeLabel = NULL),
-          appButton(label = "Likes", icon = "fa fa-heart-o", enable_badge = TRUE, badgeColor = "red",badgeLabel = 3)
-        )
+        uiOutput(outputId = 'selected_profile')
       )
     ),
-    rightSidebarTabContent(id = 2, icon = "history",
+    rightSidebarTabContent(id = 2, icon = "heart",
       timelineBlock(
         timelineEnd(color = "danger"),
         timelineLabel(2018, color = "teal"),
@@ -41,20 +40,6 @@ dashboardPagePlus(
           timelineItemMedia(src = "http://placehold.it/150x100")
         ),
         timelineStart(color = "gray")
-      )
-    ),
-    rightSidebarTabContent(id = 3, icon = "calendar",
-      box(width = NULL,
-        rightSidebarMenu(
-          rightSidebarMenuItem(
-            icon = menuIcon(name = "birthday-cake", color = "red"),
-            info = menuInfo(title = "Langdon's Birthday", description = "Will be 23 on April 24th")
-          ),
-          rightSidebarMenuItem(
-            icon = menuIcon(name = "user", color = "yellow"),
-            info = menuInfo(title = "Frodo Updated His Profile", description = "New phone +1(800)555-1234")
-          )
-        )
       )
     )
   )
