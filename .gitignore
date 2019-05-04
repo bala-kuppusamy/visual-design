@@ -5,6 +5,8 @@
 # Session Data files
 .RData
 
+*.rds
+
 /libs/
 
 # Example code in package build process
