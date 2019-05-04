@@ -61,8 +61,8 @@ filter_nodes <- function(nodes, edges) {
     dplyr::filter(id %in% edges$from | id %in% edges$to)
 
   # TEMP - TO BE REMOVED
-  nodes <- nodes %>%
-    dplyr::filter(id > 900)
+  # nodes <- nodes %>%
+  #   dplyr::filter(id > 900)
   nodes
 }
 
@@ -71,10 +71,9 @@ filter_nodes <- function(nodes, edges) {
 # define constants
 c_rds_edges <- './data/edges.rds'
 c_rds_nodes <- './data/nodes.rds'
+c_contacts_file <- './data/high-school/Contact-diaries-network_data_2013.csv'
+c_students_file <- './data/high-school/metadata_2013.txt'
 
-c_folder <- './data/high-school/'
-c_contacts_file <- paste0(folder, 'Contact-diaries-network_data_2013.csv')
-c_students_file <- paste0(folder, 'metadata_2013.txt')
 c_seed <- 20150419
 c_no_of_profiles <- 500
 c_my_id <- 984
@@ -85,7 +84,7 @@ if(file.exists(c_rds_edges)) {
   edges <- readRDS(file = c_rds_edges)
 } else {
   print('Edges: Loading from raw csv file.')
-  contacts_raw <- readr::read_delim(file = contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
+  contacts_raw <- readr::read_delim(file = c_contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
   edges <- build_edges(contacts = contacts_raw)
 
   saveRDS(object = edges, file = c_rds_edges)
@@ -99,15 +98,15 @@ if(file.exists(c_rds_nodes)) {
 } else {
   print('Nodes: Loading from raw csv file.')
   # load student data from file & download mock profiles from web service
-  students_raw <- readr::read_tsv(file = students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
+  students_raw <- readr::read_tsv(file = c_students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
   profiles <- download_profiles(seed = c_seed, no_of_profiles = c_no_of_profiles)
 
   # execution of data merge & filtering for nodes
-  nodes <- build_nodes(students = students_raw, profiles = profiles, seed = seed)
+  nodes <- build_nodes(students = students_raw, profiles = profiles, seed = c_seed)
   nodes <- filter_nodes(nodes = nodes, edges = edges)
 
   # add centrality measures from igraph to the nodes
-  nodes <- calc_centrality(nodes = nodes, edges = edges, selected_id = my_id)
+  nodes <- calc_centrality(nodes = nodes, edges = edges, selected_id = c_my_id)
 
   saveRDS(object = nodes, file = c_rds_nodes)
   print('Nodes: Saved to rds file for future use.')

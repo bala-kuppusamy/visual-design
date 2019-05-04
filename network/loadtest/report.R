@@ -1,2 +1,6 @@
-df <- shinyloadtest::load_runs('5-Workers' = './network/loadtest/out')
-shinyloadtest::shinyloadtest_report(df, './network/loadtest/report.html')
+library(shinyloadtest)
+
+base <- './network/loadtest'
+
+data <- shinyloadtest::load_runs('5-Workers' = paste(base, '/out', sep = ''))
+shinyloadtest::shinyloadtest_report(data, paste(base, 'report.html', sep = ''))
