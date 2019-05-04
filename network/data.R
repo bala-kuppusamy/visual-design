@@ -1,16 +1,4 @@
-## data-preparation - START
-
-# 01 --> define constants
-rds_folder <- './data/'
-folder <- './data/high-school/'
-contacts_file <- paste0(folder, 'Contact-diaries-network_data_2013.csv')
-students_file <- paste0(folder, 'metadata_2013.txt')
-seed <- 20150419
-no_of_profiles <- 500
-my_id <- 984
-
-# 02 --> download mock profiles
-download_profiles <- function() {
+download_profiles <- function(seed, no_of_profiles) {
   url <- paste('https://randomuser.me/api/?nat=us&seed=', seed, '&results=', no_of_profiles, sep = '')
   json_raw <- jsonlite::fromJSON(txt = url)
   json_flat <- jsonlite::flatten(json_raw$results)
@@ -24,42 +12,56 @@ download_profiles <- function() {
   json_profiles
 }
 
-profiles <- download_profiles()
-
-# 03 --> load student data from files
-contact_raw <- readr::read_delim(file = contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
-student_raw <- readr::read_tsv(file = students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
-
-# 04 --> data merge utility function definitions
-get_random_ssn <- function(gender) {
+get_random_ssn <- function(profiles, gender) {
   gender_profiles <- profiles %>%
     dplyr::filter(gender == gender)
 
   rand <- sample(1:nrow(gender_profiles), size = 1)
-  gender_profiles$ssn[rand]
+  ssn <- gender_profiles$ssn[rand]
+  ssn
 }
 
-merge_profiles <- function(student_info) {
+merge_profiles <- function(student_info, seed, profiles) {
   set.seed(seed)
 
-  student_info %>%
+  merged <- student_info %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(ssn = get_random_ssn(gender)) %>%
+    dplyr::mutate(ssn = get_random_ssn(profiles, gender)) %>%
     dplyr::left_join(profiles, by = 'ssn')
+  merged
 }
 
 add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
   name <- paste0('<br><b>', row$name.full,'</b>')
-  paste0('<p>', img, name, '</p>')
+  title <- paste0('<p>', img, name, '</p>')
+  title
 }
 
-# 05 --> execution of data merge
+## data-preparation - START
+
+# 01 --> define constants
+c_rds_folder <- './data/'
+c_folder <- './data/high-school/'
+c_contacts_file <- paste0(folder, 'Contact-diaries-network_data_2013.csv')
+c_students_file <- paste0(folder, 'metadata_2013.txt')
+c_seed <- 20150419
+c_no_of_profiles <- 500
+c_my_id <- 984
+
+# 02 --> load student data from files
+contact_raw <- readr::read_delim(file = contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
+student_raw <- readr::read_tsv(file = students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
+
+# 03 --> download mock profiles
+profiles <- download_profiles(seed = c_seed, no_of_profiles = c_no_of_profiles)
+
 contact_info <- contact_raw %>%
   dplyr::mutate(width = weight / 2)
 
+# 04 --> execution of data merge
 student_merged <- student_raw %>%
-  merge_profiles()
+  merge_profiles(seed = seed, profiles = profiles)
 
 student_filtered <- student_merged %>%
   dplyr::filter(id %in% contact_info$from | id %in% contact_info$to)
@@ -78,6 +80,6 @@ nodes <- student_filtered %>%
 
 edges <- contact_info
 
-nodes <- calcCentrality(nodes, edges, my_id)
+nodes <- calcCentrality(nodes = nodes, edges = edges, selected_id = my_id)
 
 ## data-preparation - END

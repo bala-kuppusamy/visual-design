@@ -13,7 +13,7 @@ source(file = 'data.R')
 # using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
 
-  my_id <- reactiveVal(my_id)
+  my_id <- reactiveVal(c_my_id)
   nodes <- reactiveVal(nodes)
   edges <- reactiveVal(edges)
 
