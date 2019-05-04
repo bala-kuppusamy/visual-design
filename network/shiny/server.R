@@ -66,8 +66,10 @@ shinyServer(function(input, output) {
     selected_id <- input$network_proxy_nodes_selected
     v_nodes <- nodes()
 
-    other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, v_nodes)
-    other_profile_ui()
+    if(!is.na(selected_id) && !is.null(selected_id) && selected_id != '') {
+      other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, v_nodes)
+      other_profile_ui()
+    }
   })
 
   output$user_list <- renderUI({

@@ -15,6 +15,7 @@ dashboardPagePlus(
   sidebar = dashboardSidebar(disable = TRUE),
   body = dashboardBody(
     fluidRow(
+      tags$head(tags$link(rel="shortcut icon", href="./favicon.png")),
       column(width = 9,
         visNetworkOutput("network_proxy_nodes", height = "900px")
       ),

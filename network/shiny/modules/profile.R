@@ -19,6 +19,23 @@ regular_box <- function(node) {
   )
 }
 
+get_color <- function(value) {
+  if(is.na(value) || is.null(value)) {
+    color <- 'grey'
+  } else if(value <= 1) {
+    color <- 'red'
+  } else if(value == 2) {
+    color <- 'orange'
+  } else if(value == 3) {
+    color <- 'blue'
+  } else if(value == 4) {
+    color <- 'green'
+  } else {
+    color <- 'grey'
+  }
+  color
+}
+
 # MODULE: userProfile
 userProfile <- function(input, output, session, user_id, is_self, nodes) {
   text <- reactive({
@@ -31,30 +48,15 @@ userProfile <- function(input, output, session, user_id, is_self, nodes) {
         user_box,
         box(width = 12, status = NULL,
             appButton(label = "Friends", icon = "fa fa-users", enable_badge = TRUE,
-                      badgeColor = 'purple', badgeLabel = node$degree),
+                      badgeColor = get_color(node$degree_pct), badgeLabel = node$degree),
             appButton(label = "Centrality", icon = "fa fa-street-view", enable_badge = TRUE,
-                      badgeColor = 'purple', badgeLabel = node$centrality_pct),
+                      badgeColor = get_color(node$centrality_pct), badgeLabel = node$centrality_pct),
             appButton(label = "Closeness", icon = "fa fa-heart-o", enable_badge = TRUE,
-                      badgeColor = 'purple', badgeLabel = node$closeness_pct),
+                      badgeColor = get_color(node$closeness_pct), badgeLabel = node$closeness_pct),
             appButton(label = "Betweenness", icon = "fa fa-anchor", enable_badge = TRUE,
-                      badgeColor = 'red', badgeLabel = node$betweenness_pct)
+                      badgeColor = get_color(node$betweenness_pct), badgeLabel = node$betweenness_pct)
         )
     )
   })
   return (text)
 }
-
-# get_color <- function(value) {
-#   if(is.na(value)) {
-#     color <- 'purple'
-#   } else if(value <= 1) {
-#     color <- 'red'
-#   } else if(value == 2) {
-#     color <- 'orange'
-#   } else if(value == 3) {
-#     color <- 'green'
-#   } else {
-#     color <- 'blue'
-#   }
-#   color
-# }
