@@ -13,23 +13,32 @@ source(file = 'data.R')
 # using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
 
+  my_id <- reactiveVal(my_id)
+  nodes <- reactiveVal(nodes)
+  edges <- reactiveVal(edges)
+
   sizeOption <- reactive({
     if(input$popularity) 'DEGREE' else 'DEFAULT'
   })
 
   loginId <- reactive({
-    if(!is.null(input$login_id) && !is.na(input$login_id)) input$login_id else my_id
+    login_id <- input$login_id
+    v_my_id <- my_id()
+
+    if(!is.null(login_id) && !is.na(login_id)) login_id else v_my_id
   })
 
   output$network_proxy_nodes <- renderVisNetwork({
     v_sizeOption <- sizeOption()
     v_loginId <- loginId()
+    v_nodes <- nodes()
+    v_edges <- edges()
 
-    nodes <- nodes %>%
+    v_nodes <- v_nodes %>%
       dplyr::mutate(size_default = dplyr::if_else(id == v_loginId, 50, 20)) %>%
       dplyr::mutate(size = dplyr::if_else(v_sizeOption == 'DEGREE', size_degree, size_default))
 
-    visNetwork(nodes, edges) %>%
+    visNetwork(v_nodes, v_edges) %>%
       visNodes(shadow = TRUE, shapeProperties = list(useBorderWithImage = TRUE), borderWidth = 5) %>%
       visLayout(randomSeed = 2) %>%
       visOptions(manipulation = FALSE, nodesIdSelection = list(enabled = TRUE, style = 'visibility: hidden;')) %>%
@@ -40,30 +49,36 @@ shinyServer(function(input, output) {
 
   output$my_profile <- renderUI({
     v_loginId <- loginId()
+    v_nodes <- nodes()
 
-    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, TRUE, student_filtered, nodes)
+    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, TRUE, v_nodes)
     self_profile_ui()
   })
 
   output$selected <- renderText({
+    selected_id <- input$network_proxy_nodes_selected
     v_loginId <- loginId()
 
-    input$network_proxy_nodes_selected != '' & input$network_proxy_nodes_selected != v_loginId
+    selected_id != '' & selected_id != v_loginId
   })
 
   output$selected_profile <- renderUI({
     selected_id <- input$network_proxy_nodes_selected
+    v_nodes <- nodes()
 
-    other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, student_filtered, nodes)
+    other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, v_nodes)
     other_profile_ui()
   })
 
   output$user_list <- renderUI({
-    names <- nodes %>%
-      select(id, name.full)
+    v_nodes <- nodes()
+    v_my_id <- my_id()
 
-    names_options <- setNames(as.character(names$id), names$name.full)
-    selectInput(inputId = "login_id", label = "", selected = my_id, choices = names_options)
+    names <- v_nodes %>%
+      dplyr::select(id, name.full)
+
+    names_options <- stats::setNames(as.character(names$id), names$name.full)
+    shiny::selectInput(inputId = "login_id", label = "", selected = v_my_id, choices = names_options)
   })
 
   shiny::outputOptions(output, "selected", suspendWhenHidden = FALSE)

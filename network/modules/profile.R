@@ -1,34 +1,31 @@
 
-box_items <- function(profile) {
+box_items <- function(node) {
   boxProfileItemList(bordered = TRUE,
-     boxProfileItem(title = "Class", description = paste0(profile$class, ' #', profile$id))
+     boxProfileItem(title = "Class", description = paste0(node$class, ' #', node$id))
   )
 }
 
-widget_box <- function(profile) {
-  widgetUserBox(title = profile$name.full, subtitle = profile$email, width = 12, type = 2,
-                color = "yellow", src = profile$picture.medium,
-    box_items(profile),
+widget_box <- function(node) {
+  widgetUserBox(title = node$name.full, subtitle = node$email, width = 12, type = 2,
+                color = "yellow", src = node$picture.medium,
+    box_items(node),
     footer = 'I love my science classes...'
   )
 }
 
-regular_box <- function(profile) {
-  boxProfile(title = profile$name.full, subtitle = profile$email, src = profile$picture.medium,
-    box_items(profile)
+regular_box <- function(node) {
+  boxProfile(title = node$name.full, subtitle = node$email, src = node$picture.medium,
+    box_items(node)
   )
 }
 
 # MODULE: userProfile
-userProfile <- function(input, output, session, user_id, is_self, profiles, nodes) {
+userProfile <- function(input, output, session, user_id, is_self, nodes) {
   text <- reactive({
-    profile <- profiles %>%
-      dplyr::filter(id == user_id)
-
     node <- nodes %>%
       dplyr::filter(id == user_id)
 
-    user_box <- if(is_self) widget_box(profile) else regular_box(profile)
+    user_box <- if(is_self) widget_box(node) else regular_box(node)
 
     box(width = 12,
         user_box,
