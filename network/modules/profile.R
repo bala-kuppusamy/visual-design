@@ -1,12 +1,13 @@
 
 box_items <- function(profile) {
   boxProfileItemList(bordered = TRUE,
-     boxProfileItem(title = "Class", description = paste0(profile$class, ' (', profile$id, ')'))
+     boxProfileItem(title = "Class", description = paste0(profile$class, ' #', profile$id))
   )
 }
 
 widget_box <- function(profile) {
-  widgetUserBox(title = profile$name.full, subtitle = profile$email, width = 12, type = 2, color = "yellow", src = profile$picture.medium,
+  widgetUserBox(title = profile$name.full, subtitle = profile$email, width = 12, type = 2,
+                color = "yellow", src = profile$picture.medium,
     box_items(profile),
     footer = 'I love my science classes...'
   )
@@ -18,6 +19,7 @@ regular_box <- function(profile) {
   )
 }
 
+# MODULE: userProfile
 userProfile <- function(input, output, session, user_id, is_self, profiles, nodes) {
   text <- reactive({
     profile <- profiles %>%
@@ -31,10 +33,14 @@ userProfile <- function(input, output, session, user_id, is_self, profiles, node
     box(width = 12,
         user_box,
         box(width = 12, status = NULL,
-            appButton(label = "Friends", icon = "fa fa-users", enable_badge = TRUE, badgeColor = 'purple', badgeLabel = node$degree),
-            appButton(label = "Centrality", icon = "fa fa-street-view", enable_badge = TRUE, badgeColor = 'purple', badgeLabel = node$centrality_pct),
-            appButton(label = "Closeness", icon = "fa fa-heart-o", enable_badge = TRUE, badgeColor = 'purple', badgeLabel = node$closeness_pct),
-            appButton(label = "Betweenness", icon = "fa fa-anchor", enable_badge = TRUE, badgeColor = 'red', badgeLabel = node$betweenness_pct)
+            appButton(label = "Friends", icon = "fa fa-users", enable_badge = TRUE,
+                      badgeColor = 'purple', badgeLabel = node$degree),
+            appButton(label = "Centrality", icon = "fa fa-street-view", enable_badge = TRUE,
+                      badgeColor = 'purple', badgeLabel = node$centrality_pct),
+            appButton(label = "Closeness", icon = "fa fa-heart-o", enable_badge = TRUE,
+                      badgeColor = 'purple', badgeLabel = node$closeness_pct),
+            appButton(label = "Betweenness", icon = "fa fa-anchor", enable_badge = TRUE,
+                      badgeColor = 'red', badgeLabel = node$betweenness_pct)
         )
     )
   })

@@ -7,8 +7,8 @@ library(stringr)
 library(readr)
 library(igraph)
 
-source(file = 'data.R')
 source(file = 'igraph-data.R')
+source(file = 'data.R')
 
 # using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
@@ -53,6 +53,7 @@ shinyServer(function(input, output) {
 
   output$selected_profile <- renderUI({
     selected_id <- input$network_proxy_nodes_selected
+
     other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, student_filtered, nodes)
     other_profile_ui()
   })

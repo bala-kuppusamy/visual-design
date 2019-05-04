@@ -1,6 +1,7 @@
 ## data-preparation - START
 
 # 01 --> define constants
+rds_folder <- './data/'
 folder <- './data/high-school/'
 contacts_file <- paste0(folder, 'Contact-diaries-network_data_2013.csv')
 students_file <- paste0(folder, 'metadata_2013.txt')
@@ -64,9 +65,10 @@ student_filtered <- student_merged %>%
   dplyr::filter(id %in% contact_info$from | id %in% contact_info$to)
 
 student_filtered$title <- sapply(1:nrow(student_filtered), function(x) add_title(student_filtered[x,]))
+
 # TEMP - TO BE REMOVED
-# student_filtered <- student_filtered %>%
-#   dplyr::filter(id > 900)
+student_filtered <- student_filtered %>%
+  dplyr::filter(id > 900)
 
 # 06 --> getting nodes & edges data ready for rendering
 nodes <- student_filtered %>%
@@ -75,5 +77,7 @@ nodes <- student_filtered %>%
   dplyr::mutate(shape = 'circularImage', image = picture.thumbnail)
 
 edges <- contact_info
+
+nodes <- calcCentrality(nodes, edges, my_id)
 
 ## data-preparation - END
