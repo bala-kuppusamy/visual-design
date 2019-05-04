@@ -1,7 +1,6 @@
 
-# 01 --> prepare data for igraph
-calcCentrality <- function(nodes, edges, selected_id) {
-  # remove edges with non-existant nodes
+calc_centrality <- function(nodes, edges, selected_id) {
+  # 01 --> remove edges with non-existant nodes
   edges_igraph <- edges %>%
     dplyr::filter(from %in% nodes$id & to %in% nodes$id)
 
@@ -13,22 +12,21 @@ calcCentrality <- function(nodes, edges, selected_id) {
   self_node <- igraph::V(net)[id_2 == selected_id]
 
   # 03 --> calculate centrality measures
-  nodes_centrality <- nodes
-  nodes_centrality$centrality <- igraph::centr_betw(graph = net)$res
-  nodes_centrality$degree <- igraph::degree(graph = net, mode = 'all')
-  nodes_centrality$closeness <- igraph::closeness(graph = net)
-  nodes_centrality$betweenness <- igraph::betweenness(graph = net)
-  nodes_centrality$distances <- igraph::distances(graph = net, v = igraph::V(net), to = self_node, weights = NA)[,1]
+  nodes$centrality <- igraph::centr_betw(graph = net)$res
+  nodes$degree <- igraph::degree(graph = net, mode = 'all')
+  nodes$closeness <- igraph::closeness(graph = net)
+  nodes$betweenness <- igraph::betweenness(graph = net)
+  nodes$distances <- igraph::distances(graph = net, v = igraph::V(net), to = self_node, weights = NA)[,1]
 
   # 04 --> calculate quartile measures
-  nodes_centrality$centrality_pct <- dplyr::ntile(nodes_centrality$centrality, 4)
-  nodes_centrality$degree_pct <- dplyr::ntile(nodes_centrality$degree, 4)
-  nodes_centrality$closeness_pct <- dplyr::ntile(nodes_centrality$closeness, 4)
-  nodes_centrality$betweenness_pct <- dplyr::ntile(nodes_centrality$betweenness, 4)
-  nodes_centrality$distances_pct <- dplyr::ntile(nodes_centrality$distances, 4)
+  nodes$centrality_pct <- dplyr::ntile(nodes$centrality, 4)
+  nodes$degree_pct <- dplyr::ntile(nodes$degree, 4)
+  nodes$closeness_pct <- dplyr::ntile(nodes$closeness, 4)
+  nodes$betweenness_pct <- dplyr::ntile(nodes$betweenness, 4)
+  nodes$distances_pct <- dplyr::ntile(nodes$distances, 4)
 
   # 05 --> calculate node size based on degree
-  nodes <- nodes_centrality %>%
+  nodes <- nodes %>%
     dplyr::mutate(size_degree = 10 + (degree  * 2))
 
   nodes
