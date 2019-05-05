@@ -33,18 +33,26 @@ merge_profiles <- function(student_info, seed, profiles) {
 
 add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
-  name <- paste0('<br><b>', row$name.full,'</b>')
+  name <- paste0('<br>', row$name.full,' <br>', row$class, ' #', row$id)
   title <- paste0('<p>', img, name, '</p>')
   title
 }
 
-build_edges <- function(contacts) {
+build_edges <- function(contacts_file) {
+  contacts <- readr::read_delim(file = contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
   edges <- contacts %>%
     dplyr::mutate(width = weight / 2)
+
+  saveRDS(object = edges, file = c_rds_edges)
+  print('Edges: Saved to rds file for future use.')
   edges
 }
 
-build_nodes <- function(students, profiles, seed) {
+build_nodes <- function(students_file, seed, no_of_profiles, edges, rds_nodes, rds_net) {
+  # load student data from file & download mock profiles from web service
+  students <- readr::read_tsv(file = c_students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
+  profiles <- download_profiles(seed = seed, no_of_profiles = no_of_profiles)
+
   nodes <- students %>%
     merge_profiles(seed = seed, profiles = profiles)
   nodes$title <- sapply(1:nrow(nodes), function(x) add_title(nodes[x,]))
@@ -53,16 +61,24 @@ build_nodes <- function(students, profiles, seed) {
     dplyr::mutate(label = name.full) %>%
     dplyr::mutate(group = class) %>%
     dplyr::mutate(shape = 'circularImage', image = picture.thumbnail)
-  nodes
-}
 
-filter_nodes <- function(nodes, edges) {
   nodes <- nodes %>%
     dplyr::filter(id %in% edges$from | id %in% edges$to)
 
   # TEMP - TO BE REMOVED
   # nodes <- nodes %>%
   #   dplyr::filter(id > 900)
+
+  # build igraph
+  net <- build_igraph(nodes = nodes, edges = edges)
+  saveRDS(object = net, file = rds_net)
+  print('igraph: Saved to rds file for future use.')
+
+  # add centrality measures from igraph to the nodes
+  nodes <- calc_centrality(net = net, nodes = nodes)
+
+  saveRDS(object = nodes, file = rds_nodes)
+  print('Nodes: Saved to rds file for future use.')
   nodes
 }
 
@@ -71,6 +87,7 @@ filter_nodes <- function(nodes, edges) {
 # define constants
 c_rds_edges <- './data/edges.rds'
 c_rds_nodes <- './data/nodes.rds'
+c_rds_net <- './data/net.rds'
 c_contacts_file <- './data/high-school/Contact-diaries-network_data_2013.csv'
 c_students_file <- './data/high-school/metadata_2013.txt'
 
@@ -84,32 +101,18 @@ if(file.exists(c_rds_edges)) {
   edges <- readRDS(file = c_rds_edges)
 } else {
   print('Edges: Loading from raw csv file.')
-  contacts_raw <- readr::read_delim(file = c_contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
-  edges <- build_edges(contacts = contacts_raw)
-
-  saveRDS(object = edges, file = c_rds_edges)
-  print('Edges: Saved to rds file for future use.')
+  edges <- build_edges(contacts_file = c_contacts_file)
 }
 
 # load nodes
-if(file.exists(c_rds_nodes)) {
+if(file.exists(c_rds_nodes) & file.exists(c_rds_net)) {
   print('Nodes: Loading from pre-stored rds file.')
   nodes <- readRDS(file = c_rds_nodes)
 } else {
   print('Nodes: Loading from raw csv file.')
-  # load student data from file & download mock profiles from web service
-  students_raw <- readr::read_tsv(file = c_students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
-  profiles <- download_profiles(seed = c_seed, no_of_profiles = c_no_of_profiles)
-
-  # execution of data merge & filtering for nodes
-  nodes <- build_nodes(students = students_raw, profiles = profiles, seed = c_seed)
-  nodes <- filter_nodes(nodes = nodes, edges = edges)
-
-  # add centrality measures from igraph to the nodes
-  nodes <- calc_centrality(nodes = nodes, edges = edges, selected_id = c_my_id)
-
-  saveRDS(object = nodes, file = c_rds_nodes)
-  print('Nodes: Saved to rds file for future use.')
+  nodes <- build_nodes(c_students_file, c_seed, c_no_of_profiles, edges, c_rds_nodes, c_rds_net)
 }
+
+net <- readRDS(file = c_rds_net)
 
 ## data-preparation - END
