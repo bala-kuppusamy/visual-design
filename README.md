@@ -76,8 +76,6 @@ nodes$centrality <- igraph::centr_betw(graph = net)$res
 nodes$degree <- igraph::degree(graph = net, mode = 'all')
 nodes$closeness <- igraph::closeness(graph = net)
 nodes$betweenness <- igraph::betweenness(graph = net)
-
 path <- igraph::shortest_paths(graph = net, from = from_node, to = to_node, output = 'both')
-
 neighbors <- igraph::neighbors(graph = net, v = selected_node)
 ````
