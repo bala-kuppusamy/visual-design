@@ -65,9 +65,10 @@ build_nodes <- function(students_file, seed, no_of_profiles, edges, rds_nodes, r
   nodes <- nodes %>%
     dplyr::filter(id %in% edges$from | id %in% edges$to)
 
-  # TEMP - TO BE REMOVED
-  # nodes <- nodes %>%
-  #   dplyr::filter(id > 900)
+  if(c_mode_testing) {
+    nodes <- nodes %>%
+      dplyr::filter(id > 900)
+  }
 
   # build igraph
   net <- build_igraph(nodes = nodes, edges = edges)
@@ -94,9 +95,11 @@ c_students_file <- './data/high-school/metadata_2013.txt'
 c_seed <- 20150419
 c_no_of_profiles <- 500
 c_my_id <- 984
+# mode should be OFF before deploying to server.
+c_mode_testing <- TRUE
 
 # load edges
-if(file.exists(c_rds_edges)) {
+if(file.exists(c_rds_edges) & !c_mode_testing) {
   print('Edges: Loading from pre-stored rds file.')
   edges <- readRDS(file = c_rds_edges)
 } else {
@@ -105,7 +108,7 @@ if(file.exists(c_rds_edges)) {
 }
 
 # load nodes
-if(file.exists(c_rds_nodes) & file.exists(c_rds_net)) {
+if(file.exists(c_rds_nodes) & file.exists(c_rds_net) & !c_mode_testing) {
   print('Nodes: Loading from pre-stored rds file.')
   nodes <- readRDS(file = c_rds_nodes)
 } else {

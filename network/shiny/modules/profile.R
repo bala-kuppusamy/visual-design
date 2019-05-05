@@ -72,6 +72,7 @@ friend_options <- function(path_counts, path_nodes_names, reco, rating) {
   )
 }
 
+# obtain user name for the given node id.
 get_node_name <- function(node_id, nodes_subset) {
   name <- nodes_subset %>%
     dplyr::filter(id == node_id) %>%
@@ -79,6 +80,7 @@ get_node_name <- function(node_id, nodes_subset) {
   name
 }
 
+# obtains the user names for all nodes in the path identified by the path node ids, & formats them for display.
 path_node_names <- function(path_node_ids, nodes) {
   path_counts <- length(path_node_ids)
 
@@ -94,6 +96,7 @@ path_node_names <- function(path_node_ids, nodes) {
   path_nodes_name
 }
 
+# profile box indicating the 'logged in' user
 self_box <- function(node) {
   box(width = 12,
       widget_box(node),
@@ -101,6 +104,7 @@ self_box <- function(node) {
   )
 }
 
+# profile box indicating the 'selected node' user
 other_box <- function(node, nodes, path_node_ids, neighbor_node_ids) {
   path_counts <- length(path_node_ids)
   path_nodes_names <- path_node_names(path_node_ids, nodes)

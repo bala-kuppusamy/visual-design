@@ -4,14 +4,14 @@ library(shinydashboard)
 library(visNetwork)
 library(shinydashboardPlus)
 
-dashboardPagePlus(
+dashboardPagePlus(title = "Social Butterfly",
   header = dashboardHeaderPlus(fixed = TRUE, enable_rightsidebar = TRUE, rightSidebarIcon = "users",
-            left_menu = tagList(
-              dropdownBlock(id = "view_options", title = "Change View", icon = icon("gears"),
-                prettySwitch(inputId = "popularity", label = "Show by popularity", fill = TRUE, status = "primary")),
-              dropdownBlock(id = "change_user", title = "Login as", icon = icon("gears"),
-                uiOutput(outputId = 'user_list')
-                ))),
+    left_menu = tagList(
+      dropdownBlock(id = "view_options", title = "Change View", icon = icon("gears"),
+        prettySwitch(inputId = "popularity", label = "Show by popularity", fill = TRUE, status = "primary")),
+      dropdownBlock(id = "change_user", title = "Login as", icon = icon("gears"),
+        uiOutput(outputId = 'user_list')
+    ))),
   sidebar = dashboardSidebar(disable = TRUE),
   body = dashboardBody(
     fluidRow(
