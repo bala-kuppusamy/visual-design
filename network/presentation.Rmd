@@ -1,0 +1,128 @@
+---
+output:
+  xaringan::moon_reader: default
+  html_document: default
+  pdf_document: default
+---
+name: domain-problem
+class: middle, middle
+
+#Final Presentation Group 4
+
+####Bala Kuppusamy, Minglan Ye, Jiamin Lei
+#####(Social Butterfly)
+
+####Date: 2019/04/20
+
+---
+<img src="https://cdn-images-1.medium.com/max/1000/1*IWxOuXB3csN4_na6SSm_Rg.gif" alt="busy" width="750", height="550"/>
+---
+
+name: domain-problem
+class: left, top
+
+# Domain Problem
+
+- 
+
+Datasets contains frendship between students in high school in December 2013 through serval techiniques.
+--
+
+- Research Question & Domain Problem
+
+--
+
+  - Observe each individual and determine **centrality, closesness,betweeness.**
+  
+--
+
+  - As a freshment or transfer studnet in the network, individual could utilize this network to get to know the classmates so that to have a better school experience.(Know Your Classmate)
+  
+--
+
+  - User needs to analyze the relationship between each individual through what class they are taking, who are they friend with.
+
+--
+
+<img src="https://thumbs.gfycat.com/InsidiousPhonyBlackbear-size_restricted.gif" alt="busy" width="250", height="175"/><font color="orange">
+<= My first day of school! :)
+</font>
+
+---
+name:definition of centrality, closesness,betweeness
+class:left, top
+
+# Helpful Definitions
+
+- Centrality: How many direct,  connections each 'one hop' node has to other nodes within the network.
+
+--
+
+- Closeness: This measure calculates the shortest paths between all nodes, then assigns each node a score based on its sum of shortest paths.
+
+--
+
+- Betweeness: This measure shows which nodes act as 'bridges' between nodes in a network. It does this by identifying all the shortest paths and then counting how many times each node falls on one.
+
+---
+
+---
+name:Goal & Objectives
+
+#Goal & Objectives
+
+--
+
+- Meet new people/friends/future date
+
+--
+
+- Learn more about other students and get to know your classmates
+
+--
+- New skills, inspiration,collaboration on school projects
+
+--
+
+- Food/encounter more cuisines and culture
+
+--
+
+- Networking aka build relationships
+
+<img src="https://cdn-images-1.medium.com/max/1200/1*oqC2418qR3teriHPIVIvhg.png" alt="busy" width="350", height="250"/>
+---
+name: dashboard
+
+# Visual Dashboard
+
+#### Libraries used
+
+--
+
+- jsonlite,curl,dplyr,stringr,readr,visNetwork
+
+--
+
+- shiny, shiny widgets, shiny dashboard, shiny dashboard plus, shinythemes, xaringan, xaringan themes
+
+--
+
+<img src="https://media.tenor.com/images/172b78aa15e620b11fe309828af3c757/tenor.gif" alt="busy" width="300", height="205"/><font color="orange">
+<= Networking is hard! :)
+</font>
+
+--
+
+<br />
+https://balavigneswaran-kuppusamy.shinyapps.io/network/
+
+---
+<img src="https://media.giphy.com/media/MiapFHASKG1Us/giphy.gif" alt="busy" width="750", height="550"/>
+
+---
+name: thanks
+count: false
+class: center, middle
+
+# Thank You!
