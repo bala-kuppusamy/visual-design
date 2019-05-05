@@ -25,7 +25,7 @@ get_color <- function(value) {
     color <- 'orange'
   } else if(value == 3) {
     color <- 'blue'
-  } else if(value == 4) {
+  } else if(value >= 4) {
     color <- 'green'
   } else {
     color <- 'grey'
@@ -46,51 +46,68 @@ buttons_row <- function(node) {
   )
 }
 
-friend_options <- function() {
+friend_options <- function(path_counts, path_nodes_names) {
   box(width = 12, status = NULL,
       fluidRow(
         column(width = 6,
-               boxPad(color = "green",
-                      descriptionBlock(
-                        header = "8390",
-                        text = "VISITS",
-                        right_border = FALSE,
-                        margin_bottom = TRUE
-                      )
-               )
+           boxPad(color = "green",
+              descriptionBlock(
+                header = path_counts,
+                text = path_nodes_names,
+                right_border = FALSE,
+                margin_bottom = FALSE
+              )
+           )
         ),
         column(width = 6,
-               boxPad(color = "blue",
-                      descriptionBlock(
-                        header = "8390",
-                        text = "VISITS",
-                        right_border = FALSE,
-                        margin_bottom = TRUE
-                      )
-               )
+           boxPad(color = "blue",
+              descriptionBlock(
+                header = "8390",
+                text = "VISITS",
+                right_border = FALSE,
+                margin_bottom = TRUE
+              )
+           )
         )
       )
   )
 }
 
+path_node_names <- function(path_node_ids, nodes) {
+  path_counts <- length(path_node_ids)
+  path_nodes <- nodes %>%
+    dplyr::filter(id %in% path_node_ids) %>%
+    dplyr::select(name.full) %>%
+    dplyr::slice(1:5)
+  path_nodes_names <- stringr::str_c(path_nodes$name.full, collapse = ' -> ')
+  path_nodes_names <- if(path_counts > nrow(path_nodes)) paste0(path_nodes_names, ' ...') else path_nodes_names
+  path_nodes_names
+}
+
+self_box <- function(node) {
+  box(width = 12,
+      widget_box(node),
+      buttons_row(node)
+  )
+}
+
+other_box <- function(node, path_node_ids, nodes) {
+  path_counts <- length(path_node_ids)
+  path_nodes_names <- path_node_names(path_node_ids, nodes)
+  box(width = 12,
+      regular_box(node),
+      buttons_row(node),
+      friend_options(path_counts, path_nodes_names)
+  )
+}
+
 # MODULE: userProfile
-userProfile <- function(input, output, session, user_id, is_self, nodes) {
+userProfile <- function(input, output, session, user_id, path_node_ids, is_self, nodes) {
   text <- reactive({
     node <- nodes %>%
       dplyr::filter(id == user_id)
 
-    if(is_self) {
-      box <- box(width = 12,
-               widget_box(node),
-               buttons_row(node)
-            )
-    } else {
-      box <- box(width = 12,
-               regular_box(node),
-               buttons_row(node),
-               friend_options()
-            )
-    }
+    box <- if(is_self) self_box(node) else other_box(node, path_node_ids, nodes)
     box
   })
   return (text)

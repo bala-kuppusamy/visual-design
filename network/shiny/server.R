@@ -16,8 +16,11 @@ shinyServer(function(input, output) {
 
   my_id <- reactiveVal(c_my_id)
   nodes <- reactiveVal(nodes)
-  edges <- reactiveVal(edges)
   net <- reactiveVal(net)
+  edges_2 <- reactive({
+    edges <- tibble::rowid_to_column(edges, 'id')
+    edges
+  })
 
   sizeOption <- reactive({
     if(input$popularity) 'DEGREE' else 'DEFAULT'
@@ -45,11 +48,68 @@ shinyServer(function(input, output) {
     id
   })
 
+  output$my_profile <- renderUI({
+    v_loginId <- loginId()
+    v_nodes <- nodes()
+
+    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, NULL, TRUE, v_nodes)
+    self_profile_ui()
+  })
+
+  output$is_selected <- renderText({
+    v_isSelected <- isSelected()
+    v_isSelected
+  })
+
+  output$selected_profile <- renderUI({
+    v_selectedId <- selectedId()
+    v_loginId <- loginId()
+    v_nodes <- nodes()
+    v_net <- net()
+
+    if(!is.null(v_selectedId)) {
+      path <- calc_path(v_net, v_loginId, v_selectedId)
+      path_nodes <- v_nodes[unlist(path$vpath), ]
+      path_node_ids <- path_nodes %>%
+        dplyr::pull(id)
+
+      other_profile_ui <- shiny::callModule(userProfile, 'profile', v_selectedId, path_node_ids, FALSE, v_nodes)
+      other_profile_ui()
+    }
+  })
+
+  # observe({
+  #   v_selectedId <- selectedId()
+  #   v_loginId <- loginId()
+  #   v_nodes <- nodes()
+  #   v_edges <- edges_2()
+  #   v_net <- net()
+  #
+  #   if(!is.null(v_selectedId)) {
+  #     path <- calc_path(v_net, v_loginId, v_selectedId)
+  #     path_nodes <- unlist(path$vpath)
+  #     path_nodes <- v_nodes[path_nodes, ]
+  #     path_node_ids <- path_nodes %>%
+  #       dplyr::select(id)
+  #     print(path_node_ids)
+  #
+  #     path_edges <- unlist(path$epath)
+  #     path_edges <- v_edges[path_edges, ]
+  #     path_edge_ids <- path_edges %>%
+  #       dplyr::select(id)
+  #     print(path_edge_ids)
+  #
+  #     visNetworkProxy("network_proxy_nodes") %>%
+  #       visSelectNodes(id = path_node_ids) %>%
+  #       visSelectEdges(id = path_edge_ids)
+  #   }
+  # })
+
   output$network_proxy_nodes <- renderVisNetwork({
     v_sizeOption <- sizeOption()
     v_loginId <- loginId()
     v_nodes <- nodes()
-    v_edges <- edges()
+    v_edges <- edges_2()
 
     v_nodes <- v_nodes %>%
       dplyr::mutate(size_default = dplyr::if_else(id == v_loginId, 50, 20)) %>%
@@ -62,44 +122,6 @@ shinyServer(function(input, output) {
       visInteraction(hideEdgesOnDrag = TRUE) %>%
       visPhysics(stabilization = FALSE) %>%
       visEdges(smooth = FALSE)
-  })
-
-  output$my_profile <- renderUI({
-    v_loginId <- loginId()
-    v_nodes <- nodes()
-
-    self_profile_ui <- shiny::callModule(userProfile, 'profile', v_loginId, TRUE, v_nodes)
-    self_profile_ui()
-  })
-
-  output$is_selected <- renderText({
-    v_isSelected <- isSelected()
-    v_isSelected
-  })
-
-  output$selected_profile <- renderUI({
-    v_selectedId <- selectedId()
-    v_nodes <- nodes()
-
-    if(!is.null(v_selectedId)) {
-      other_profile_ui <- shiny::callModule(userProfile, 'profile', v_selectedId, FALSE, v_nodes)
-      other_profile_ui()
-    }
-  })
-
-  output$selected_profile_2 <- renderUI({
-    v_selectedId <- selectedId()
-    v_nodes <- nodes()
-    v_net <- net()
-
-    if(!is.null(v_selectedId)) {
-      path <- calc_path(v_net, v_loginId, selected_id)
-      path_nodes <- unlist(path$vpath)
-      path_nodes <- v_nodes[path_nodes, ]
-      path_ids <- path_nodes %>%
-        select(id, name.full)
-      print(path_ids)
-    }
   })
 
   output$user_list <- renderUI({
