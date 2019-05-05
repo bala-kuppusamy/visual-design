@@ -16,7 +16,7 @@ build_igraph <- function(nodes, edges) {
 # calculate centrality measures from the igraph & add them to the nodes dataframe
 calc_centrality <- function(net, nodes) {
   # 03 --> calculate centrality measures
-  nodes$centrality <- igraph::centr_betw(graph = net)$res
+  nodes$centrality <- igraph::centr_eigen(graph = net)$res
   nodes$degree <- igraph::degree(graph = net, mode = 'all')
   nodes$closeness <- igraph::closeness(graph = net)
   nodes$betweenness <- igraph::betweenness(graph = net)

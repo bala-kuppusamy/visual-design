@@ -1,20 +1,24 @@
 ---
+title: "Project Presentation - Group 4"
+subtitle: "(Social Butterfly)"
+author: "Bala Kuppusamy, Minglan Ye, Jiamin Lei"
+date: "2019/05/06"
 output:
   xaringan::moon_reader: default
   html_document: default
   pdf_document: default
 ---
-name: domain-problem
-class: middle, middle
+<!-- name: domain-problem -->
+<!-- class: middle, middle -->
 
-#Final Presentation Group 4
+<!-- #Project Presentation - Group 4 -->
 
-####Bala Kuppusamy, Minglan Ye, Jiamin Lei
-#####(Social Butterfly)
+<!-- ####Bala Kuppusamy, Minglan Ye, Jiamin Lei -->
+<!-- #####(Social Butterfly) -->
 
-####Date: 2019/04/20
+<!-- ####Date: 2019/05/06 -->
 
----
+<!-- --- -->
 <img src="https://cdn-images-1.medium.com/max/1000/1*IWxOuXB3csN4_na6SSm_Rg.gif" alt="busy" width="750", height="550"/>
 ---
 
@@ -25,22 +29,22 @@ class: left, top
 
 - 
 
-Datasets contains frendship between students in high school in December 2013 through serval techiniques.
+Dataset contains school friends network data in a US high school in December 2013.
 --
 
 - Research Question & Domain Problem
 
 --
 
-  - Observe each individual and determine **centrality, closesness,betweeness.**
+  - Calculate Social Network Analysis measures for each individual.
   
 --
 
-  - As a freshment or transfer studnet in the network, individual could utilize this network to get to know the classmates so that to have a better school experience.(Know Your Classmate)
+  - As freshmen or transfer students in a new school, students could utilize this application to get to know the classmates to have a better school experience. (Know Your Classmate)
   
 --
 
-  - User needs to analyze the relationship between each individual through what class they are taking, who are they friend with.
+  - Students can visualize the relationship between each individual through what class they are taking, who are they connected to, etc.
 
 --
 
@@ -49,20 +53,27 @@ Datasets contains frendship between students in high school in December 2013 thr
 </font>
 
 ---
-name:definition of centrality, closesness,betweeness
+name:definition of centrality, closesness, betweenness
 class:left, top
 
 # Helpful Definitions
 
-- Centrality: How many direct,  connections each 'one hop' node has to other nodes within the network.
+- **Degree**: How many direct, 'one hop' connections each node has to other nodes within the network. *Very connected individuals, popular individuals.*
 
 --
 
-- Closeness: This measure calculates the shortest paths between all nodes, then assigns each node a score based on its sum of shortest paths.
+- **Eigen Centrality**: How well connected a node is, and how many links their connections have, and so on through the network. *A good ‘all-round’ SNA score.*
 
 --
 
-- Betweeness: This measure shows which nodes act as 'bridges' between nodes in a network. It does this by identifying all the shortest paths and then counting how many times each node falls on one.
+- **Closeness**: Measures ‘closeness’ to all other nodes within the network. Calculates shortest paths between all nodes, then assigns each node a score based on its sum of shortest paths. *Individuals who are best placed to influence the entire network most quickly. Good ‘broadcasters’.*
+
+--
+
+- **Betweeness**: Measures number of times a node lies on the shortest path between other nodes. This measure shows which nodes act as 'bridges' between nodes in a network. *Individuals who influence the flow around a system.*
+
+
+Reference: [link](https://cambridge-intelligence.com/keylines-faqs-social-network-analysis/)
 
 ---
 
@@ -73,18 +84,18 @@ name:Goal & Objectives
 
 --
 
-- Meet new people/friends/future date
+- Meet new people / friends / future date
 
 --
 
 - Learn more about other students and get to know your classmates
 
 --
-- New skills, inspiration,collaboration on school projects
+- New skills, inspiration, collaboration on school projects
 
 --
 
-- Food/encounter more cuisines and culture
+- Food / encounter more cuisines and culture
 
 --
 
@@ -96,15 +107,15 @@ name: dashboard
 
 # Visual Dashboard
 
-#### Libraries used
+##### Libraries used
 
 --
 
-- jsonlite,curl,dplyr,stringr,readr,visNetwork
+- visNetwork, igraph, tidyverse, jsonlite, curl
 
 --
 
-- shiny, shiny widgets, shiny dashboard, shiny dashboard plus, shinythemes, xaringan, xaringan themes
+- shiny, shinydashboardPlus, xaringan, xaringan themes
 
 --
 

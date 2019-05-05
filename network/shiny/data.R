@@ -1,3 +1,4 @@
+# download user profiles json from web API & do data prep.
 download_profiles <- function(seed, no_of_profiles) {
   url <- paste('https://randomuser.me/api/?nat=us&seed=', seed, '&results=', no_of_profiles, sep = '')
   json_raw <- jsonlite::fromJSON(txt = url)
@@ -12,6 +13,7 @@ download_profiles <- function(seed, no_of_profiles) {
   profiles
 }
 
+# find a random ssn (matching the gender) to match student with user profile
 get_random_ssn <- function(profiles, gender) {
   gender_profiles <- profiles %>%
     dplyr::filter(gender == gender)
@@ -21,6 +23,7 @@ get_random_ssn <- function(profiles, gender) {
   ssn
 }
 
+# merge student info with user profile matching by ssn.
 merge_profiles <- function(student_info, seed, profiles) {
   set.seed(seed)
 
@@ -31,6 +34,7 @@ merge_profiles <- function(student_info, seed, profiles) {
   nodes
 }
 
+# add a mouseover tooltip for each node
 add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
   name <- paste0('<br>', row$name.full,' <br>', row$class, ' #', row$id)
@@ -38,6 +42,8 @@ add_title <- function(row) {
   title
 }
 
+# build edges from the contacts file
+# --> save to rds for future use
 build_edges <- function(contacts_file) {
   contacts <- readr::read_delim(file = contacts_file, delim = ' ', col_names = c('from', 'to', 'weight'), col_types = 'nnn')
   edges <- contacts %>%
@@ -48,6 +54,13 @@ build_edges <- function(contacts_file) {
   edges
 }
 
+# build nodes from the students file
+# --> download user profiles from web API
+# --> merge student info with user profiles
+# --> build igraph for calculating centrality measures
+# --> save igraph to rds for future use
+# --> calculate centrality measures using igraph & store it in nodes
+# --> save nodes to rds for future use
 build_nodes <- function(students_file, seed, no_of_profiles, edges, rds_nodes, rds_net) {
   # load student data from file & download mock profiles from web service
   students <- readr::read_tsv(file = c_students_file, col_names = c('id', 'class', 'gender'), col_types = 'ncc')
@@ -65,7 +78,7 @@ build_nodes <- function(students_file, seed, no_of_profiles, edges, rds_nodes, r
   nodes <- nodes %>%
     dplyr::filter(id %in% edges$from | id %in% edges$to)
 
-  if(c_mode_testing) {
+  if(c_mode_development) {
     nodes <- nodes %>%
       dplyr::filter(id > 900)
   }
@@ -96,10 +109,10 @@ c_seed <- 20150419
 c_no_of_profiles <- 500
 c_my_id <- 984
 # mode should be OFF before deploying to server.
-c_mode_testing <- TRUE
+c_mode_development <- TRUE
 
-# load edges
-if(file.exists(c_rds_edges) & !c_mode_testing) {
+# load edges either from rds or csv
+if(file.exists(c_rds_edges) & !c_mode_development) {
   print('Edges: Loading from pre-stored rds file.')
   edges <- readRDS(file = c_rds_edges)
 } else {
@@ -107,8 +120,8 @@ if(file.exists(c_rds_edges) & !c_mode_testing) {
   edges <- build_edges(contacts_file = c_contacts_file)
 }
 
-# load nodes
-if(file.exists(c_rds_nodes) & file.exists(c_rds_net) & !c_mode_testing) {
+# load nodes either from rds or csv
+if(file.exists(c_rds_nodes) & file.exists(c_rds_net) & !c_mode_development) {
   print('Nodes: Loading from pre-stored rds file.')
   nodes <- readRDS(file = c_rds_nodes)
 } else {
@@ -116,6 +129,7 @@ if(file.exists(c_rds_nodes) & file.exists(c_rds_net) & !c_mode_testing) {
   nodes <- build_nodes(c_students_file, c_seed, c_no_of_profiles, edges, c_rds_nodes, c_rds_net)
 }
 
+# load igraph either from rds
 net <- readRDS(file = c_rds_net)
 
 ## data-preparation - END
