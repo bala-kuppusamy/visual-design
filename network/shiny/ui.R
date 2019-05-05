@@ -25,8 +25,8 @@ dashboardPagePlus(
   rightsidebar = rightSidebar(width = 500, background = "dark",
     rightSidebarTabContent(id = 1, icon = "address-card", active = TRUE,
       uiOutput(outputId = 'my_profile'),
-      conditionalPanel("output.selected == 'TRUE'",
-        uiOutput(outputId = 'selected_profile')
+      conditionalPanel("output.is_selected == 'TRUE'",
+         uiOutput(outputId = 'selected_profile')
       )
     ),
     rightSidebarTabContent(id = 2, icon = "heart",

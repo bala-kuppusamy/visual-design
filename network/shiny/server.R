@@ -10,12 +10,14 @@ library(igraph)
 source(file = 'igraph-data.R')
 source(file = 'data.R')
 
+
 # using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
 
   my_id <- reactiveVal(c_my_id)
   nodes <- reactiveVal(nodes)
   edges <- reactiveVal(edges)
+  net <- reactiveVal(net)
 
   sizeOption <- reactive({
     if(input$popularity) 'DEGREE' else 'DEFAULT'
@@ -26,6 +28,21 @@ shinyServer(function(input, output) {
     v_my_id <- my_id()
 
     if(!is.null(login_id) && !is.na(login_id)) login_id else v_my_id
+  })
+
+  isSelected <- reactive({
+    selected_id <- input$network_proxy_nodes_selected
+    v_loginId <- loginId()
+
+    !is.null(selected_id) && selected_id != '' && selected_id != v_loginId
+  })
+
+  selectedId <- reactive({
+    v_isSelected <- isSelected()
+    selected_id <- input$network_proxy_nodes_selected
+
+    id <- if(v_isSelected) selected_id else NULL
+    id
   })
 
   output$network_proxy_nodes <- renderVisNetwork({
@@ -55,20 +72,33 @@ shinyServer(function(input, output) {
     self_profile_ui()
   })
 
-  output$selected <- renderText({
-    selected_id <- input$network_proxy_nodes_selected
-    v_loginId <- loginId()
-
-    selected_id != '' & selected_id != v_loginId
+  output$is_selected <- renderText({
+    v_isSelected <- isSelected()
+    v_isSelected
   })
 
   output$selected_profile <- renderUI({
-    selected_id <- input$network_proxy_nodes_selected
+    v_selectedId <- selectedId()
     v_nodes <- nodes()
 
-    if(!is.na(selected_id) && !is.null(selected_id) && selected_id != '') {
-      other_profile_ui <- shiny::callModule(userProfile, 'profile', selected_id, FALSE, v_nodes)
+    if(!is.null(v_selectedId)) {
+      other_profile_ui <- shiny::callModule(userProfile, 'profile', v_selectedId, FALSE, v_nodes)
       other_profile_ui()
+    }
+  })
+
+  output$selected_profile_2 <- renderUI({
+    v_selectedId <- selectedId()
+    v_nodes <- nodes()
+    v_net <- net()
+
+    if(!is.null(v_selectedId)) {
+      path <- calc_path(v_net, v_loginId, selected_id)
+      path_nodes <- unlist(path$vpath)
+      path_nodes <- v_nodes[path_nodes, ]
+      path_ids <- path_nodes %>%
+        select(id, name.full)
+      print(path_ids)
     }
   })
 
@@ -83,6 +113,6 @@ shinyServer(function(input, output) {
     shiny::selectInput(inputId = "login_id", label = "", selected = v_my_id, choices = names_options)
   })
 
-  shiny::outputOptions(output, "selected", suspendWhenHidden = FALSE)
+  shiny::outputOptions(output, "is_selected", suspendWhenHidden = FALSE)
   shiny::outputOptions(output, "user_list", suspendWhenHidden = FALSE)
 })

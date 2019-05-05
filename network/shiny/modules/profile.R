@@ -6,17 +6,14 @@ box_items <- function(node) {
 }
 
 widget_box <- function(node) {
-  widgetUserBox(title = node$name.full, subtitle = node$email, width = 12, type = 2,
-                color = "yellow", src = node$picture.medium,
-    box_items(node),
-    footer = 'I love my science classes...'
+  widgetUserBox(title = node$name.full,
+                width = 12, type = 2, color = "yellow", src = node$picture.medium,
+    footer = paste0(node$class, ' #', node$id)
   )
 }
 
 regular_box <- function(node) {
-  boxProfile(title = node$name.full, subtitle = node$email, src = node$picture.medium,
-    box_items(node)
-  )
+  boxProfile(title = node$name.full, subtitle = paste0(node$class, ' #', node$id), src = node$picture.medium)
 }
 
 get_color <- function(value) {
@@ -36,27 +33,65 @@ get_color <- function(value) {
   color
 }
 
+buttons_row <- function(node) {
+  box(width = 12, status = NULL,
+      appButton(label = "Friendship", icon = "fa fa-users", enable_badge = TRUE,
+                badgeColor = get_color(node$degree_pct), badgeLabel = node$degree),
+      appButton(label = "Centrality", icon = "fa fa-street-view", enable_badge = TRUE,
+                badgeColor = get_color(node$centrality_pct), badgeLabel = node$centrality_pct),
+      appButton(label = "Closeness", icon = "fa fa-heart-o", enable_badge = TRUE,
+                badgeColor = get_color(node$closeness_pct), badgeLabel = node$closeness_pct),
+      appButton(label = "Betweenness", icon = "fa fa-anchor", enable_badge = TRUE,
+                badgeColor = get_color(node$betweenness_pct), badgeLabel = node$betweenness_pct)
+  )
+}
+
+friend_options <- function() {
+  box(width = 12, status = NULL,
+      fluidRow(
+        column(width = 6,
+               boxPad(color = "green",
+                      descriptionBlock(
+                        header = "8390",
+                        text = "VISITS",
+                        right_border = FALSE,
+                        margin_bottom = TRUE
+                      )
+               )
+        ),
+        column(width = 6,
+               boxPad(color = "blue",
+                      descriptionBlock(
+                        header = "8390",
+                        text = "VISITS",
+                        right_border = FALSE,
+                        margin_bottom = TRUE
+                      )
+               )
+        )
+      )
+  )
+}
+
 # MODULE: userProfile
 userProfile <- function(input, output, session, user_id, is_self, nodes) {
   text <- reactive({
     node <- nodes %>%
       dplyr::filter(id == user_id)
 
-    user_box <- if(is_self) widget_box(node) else regular_box(node)
-
-    box(width = 12,
-        user_box,
-        box(width = 12, status = NULL,
-            appButton(label = "Friends", icon = "fa fa-users", enable_badge = TRUE,
-                      badgeColor = get_color(node$degree_pct), badgeLabel = node$degree),
-            appButton(label = "Centrality", icon = "fa fa-street-view", enable_badge = TRUE,
-                      badgeColor = get_color(node$centrality_pct), badgeLabel = node$centrality_pct),
-            appButton(label = "Closeness", icon = "fa fa-heart-o", enable_badge = TRUE,
-                      badgeColor = get_color(node$closeness_pct), badgeLabel = node$closeness_pct),
-            appButton(label = "Betweenness", icon = "fa fa-anchor", enable_badge = TRUE,
-                      badgeColor = get_color(node$betweenness_pct), badgeLabel = node$betweenness_pct)
-        )
-    )
+    if(is_self) {
+      box <- box(width = 12,
+               widget_box(node),
+               buttons_row(node)
+            )
+    } else {
+      box <- box(width = 12,
+               regular_box(node),
+               buttons_row(node),
+               friend_options()
+            )
+    }
+    box
   })
   return (text)
 }
