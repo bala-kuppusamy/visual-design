@@ -33,7 +33,7 @@ merge_profiles <- function(student_info, seed, profiles) {
 
 add_title <- function(row) {
   img <- paste0('<img src="', row$picture.large, '">')
-  name <- paste0('<br>', row$name.full,' (', row$id, ')')
+  name <- paste0('<br>', row$name.full,' <br>', row$class, ' #', row$id)
   title <- paste0('<p>', img, name, '</p>')
   title
 }
@@ -66,19 +66,19 @@ build_nodes <- function(students_file, seed, no_of_profiles, edges, rds_nodes, r
     dplyr::filter(id %in% edges$from | id %in% edges$to)
 
   # TEMP - TO BE REMOVED
-  nodes <- nodes %>%
-    dplyr::filter(id > 900)
+  # nodes <- nodes %>%
+  #   dplyr::filter(id > 900)
 
   # build igraph
   net <- build_igraph(nodes = nodes, edges = edges)
   saveRDS(object = net, file = rds_net)
+  print('igraph: Saved to rds file for future use.')
 
   # add centrality measures from igraph to the nodes
   nodes <- calc_centrality(net = net, nodes = nodes)
 
   saveRDS(object = nodes, file = rds_nodes)
   print('Nodes: Saved to rds file for future use.')
-
   nodes
 }
 

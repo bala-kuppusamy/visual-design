@@ -18,17 +18,17 @@ regular_box <- function(node) {
 
 get_color <- function(value) {
   if(is.na(value) || is.null(value)) {
-    color <- 'grey'
-  } else if(value <= 1) {
+    color <- 'purple'
+  } else if(value >= 0 & value <= 1) {
     color <- 'red'
-  } else if(value == 2) {
+  } else if(value > 1 & value <= 2) {
     color <- 'orange'
-  } else if(value == 3) {
+  } else if(value > 2 & value <= 3) {
     color <- 'blue'
-  } else if(value >= 4) {
+  } else if(value > 3) {
     color <- 'green'
   } else {
-    color <- 'grey'
+    color <- 'purple'
   }
   color
 }
@@ -46,7 +46,7 @@ buttons_row <- function(node) {
   )
 }
 
-friend_options <- function(path_counts, path_nodes_names) {
+friend_options <- function(path_counts, path_nodes_names, reco, rating) {
   box(width = 12, status = NULL,
       fluidRow(
         column(width = 6,
@@ -60,12 +60,11 @@ friend_options <- function(path_counts, path_nodes_names) {
            )
         ),
         column(width = 6,
-           boxPad(color = "blue",
+           boxPad(color = get_color(rating),
               descriptionBlock(
-                header = "8390",
-                text = "VISITS",
+                text = reco,
                 right_border = FALSE,
-                margin_bottom = TRUE
+                margin_bottom = FALSE
               )
            )
         )
@@ -73,15 +72,26 @@ friend_options <- function(path_counts, path_nodes_names) {
   )
 }
 
+get_node_name <- function(node_id, nodes_subset) {
+  name <- nodes_subset %>%
+    dplyr::filter(id == node_id) %>%
+    dplyr::pull(name.full)
+  name
+}
+
 path_node_names <- function(path_node_ids, nodes) {
   path_counts <- length(path_node_ids)
-  path_nodes <- nodes %>%
-    dplyr::filter(id %in% path_node_ids) %>%
-    dplyr::select(name.full) %>%
-    dplyr::slice(1:5)
-  path_nodes_names <- stringr::str_c(path_nodes$name.full, collapse = ' -> ')
-  path_nodes_names <- if(path_counts > nrow(path_nodes)) paste0(path_nodes_names, ' ...') else path_nodes_names
-  path_nodes_names
+
+  limit <- if(length(path_node_ids) > 5) 5 else length(path_node_ids)
+  path_node_ids_subset <- path_node_ids[1:limit]
+
+  nodes_subset <- nodes %>%
+    dplyr::filter(id %in% path_node_ids_subset)
+
+  path_nodes_names <- sapply(1:length(path_node_ids_subset), function(x) get_node_name(path_node_ids_subset[x], nodes_subset))
+  path_nodes_name <- stringr::str_c(path_nodes_names, collapse = ' -> ')
+  path_nodes_name <- if(path_counts > length(path_node_ids_subset)) paste0(path_nodes_name, ' ...') else path_nodes_name
+  path_nodes_name
 }
 
 self_box <- function(node) {
@@ -91,23 +101,32 @@ self_box <- function(node) {
   )
 }
 
-other_box <- function(node, path_node_ids, nodes) {
+other_box <- function(node, nodes, path_node_ids, neighbor_node_ids) {
   path_counts <- length(path_node_ids)
   path_nodes_names <- path_node_names(path_node_ids, nodes)
+
+  rating <- (node$degree_pct + node$centrality_pct + node$closeness_pct + node$betweenness_pct) / 4
+  reco <- if(rating > 2) 'YES' else 'NO'
+
+  if(node$id %in% neighbor_node_ids) {
+    rating <- -1
+    reco <- 'ALREADY FRIEND'
+  }
+
   box(width = 12,
       regular_box(node),
       buttons_row(node),
-      friend_options(path_counts, path_nodes_names)
+      friend_options(path_counts, path_nodes_names, reco, rating)
   )
 }
 
 # MODULE: userProfile
-userProfile <- function(input, output, session, user_id, path_node_ids, is_self, nodes) {
+userProfile <- function(input, output, session, user_id, is_self, nodes, path_node_ids, neighbor_node_ids) {
   text <- reactive({
     node <- nodes %>%
       dplyr::filter(id == user_id)
 
-    box <- if(is_self) self_box(node) else other_box(node, path_node_ids, nodes)
+    box <- if(is_self) self_box(node) else other_box(node, nodes, path_node_ids, neighbor_node_ids)
     box
   })
   return (text)
