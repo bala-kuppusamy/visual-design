@@ -1,4 +1,5 @@
 
+# build igraph from nodes & edges
 build_igraph <- function(nodes, edges) {
   # 01 --> remove edges with non-existant nodes
   edges_igraph <- edges %>%
@@ -12,6 +13,7 @@ build_igraph <- function(nodes, edges) {
   net
 }
 
+# calculate centrality measures from the igraph & add them to the nodes dataframe
 calc_centrality <- function(net, nodes) {
   # 03 --> calculate centrality measures
   nodes$centrality <- igraph::centr_betw(graph = net)$res
@@ -31,6 +33,7 @@ calc_centrality <- function(net, nodes) {
   nodes
 }
 
+## unused method
 calc_distance <- function(net, nodes, selected_id) {
   self_node <- igraph::V(net)[id_2 == selected_id]
 
@@ -39,6 +42,7 @@ calc_distance <- function(net, nodes, selected_id) {
   nodes
 }
 
+# calculate shortest distance between 2 nodes & identifies ids of all nodes in the path.
 calc_path_node_ids <- function(net, nodes, from_id, to_id) {
   from_node <- igraph::V(net)[id_2 == from_id]
   to_node <- igraph::V(net)[id_2 == to_id]
@@ -49,6 +53,7 @@ calc_path_node_ids <- function(net, nodes, from_id, to_id) {
   path_node_ids
 }
 
+# identify all immediate neighbors in the igraph for a given node & get their ids.
 calc_neighbor_node_ids <- function(net, nodes, selected_id) {
   selected_node <- igraph::V(net)[id_2 == selected_id]
   neighbors <- igraph::neighbors(graph = net, v = selected_node)
@@ -59,6 +64,12 @@ calc_neighbor_node_ids <- function(net, nodes, selected_id) {
   neighbor_node_ids
 }
 
+# potential friend suggestions
+# --> exclude self
+# --> exclude immediate neighbors
+# --> ensure ALL centrality measures should be in the 3rd or 4th quartile.
+# --> descending order of total centrality measures
+# --> sliced with top 5.
 friend_suggestions <- function(net, nodes, selected_id) {
   neighbor_node_ids <- calc_neighbor_node_ids(net, nodes, selected_id)
   # friend suggestion should exclude self & existing friends

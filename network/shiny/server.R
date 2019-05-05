@@ -11,17 +11,12 @@ source(file = 'igraph-data.R')
 source(file = 'data.R')
 
 
-# using visNetwork proxy for improved rendering performance
 shinyServer(function(input, output) {
 
   my_id <- reactiveVal(c_my_id)
   nodes <- reactiveVal(nodes)
   net <- reactiveVal(net)
-
-  edges_2 <- reactive({
-    edges <- tibble::rowid_to_column(edges, 'id')
-    edges
-  })
+  edges <- reactiveVal(edges)
 
   sizeOption <- reactive({
     if(input$popularity) 'DEGREE' else 'DEFAULT'
@@ -69,6 +64,7 @@ shinyServer(function(input, output) {
     v_nodes <- nodes()
     v_net <- net()
 
+    # build profile only if a node is selected.
     if(!is.null(v_selectedId)) {
       path_node_ids <- calc_path_node_ids(v_net, v_nodes, v_loginId, v_selectedId)
       neighbor_node_ids <- calc_neighbor_node_ids(v_net, v_nodes, v_loginId)
@@ -84,19 +80,21 @@ shinyServer(function(input, output) {
     v_nodes <- nodes()
     v_net <- net()
 
+    # build friend suggestions only if NO node is selected.
     if(is.null(v_selectedId)) {
-      friend_suggestion_ids <- friend_suggestions(v_net, v_nodes, v_loginId)
+      suggestion_ids <- friend_suggestions(v_net, v_nodes, v_loginId)
 
-      suggestions_ui <- shiny::callModule(suggestions, 'suggestions', v_nodes, friend_suggestion_ids)
+      suggestions_ui <- shiny::callModule(suggestions, 'suggestions', v_nodes, suggestion_ids)
       suggestions_ui()
     }
   })
 
+  # using visNetwork proxy for improved rendering performance
   output$network_proxy_nodes <- renderVisNetwork({
     v_sizeOption <- sizeOption()
     v_loginId <- loginId()
     v_nodes <- nodes()
-    v_edges <- edges_2()
+    v_edges <- edges()
 
     v_nodes <- v_nodes %>%
       dplyr::mutate(size_default = dplyr::if_else(id == v_loginId, 50, 20)) %>%
