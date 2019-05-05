@@ -109,7 +109,7 @@ c_seed <- 20150419
 c_no_of_profiles <- 500
 c_my_id <- 984
 # mode should be OFF before deploying to server.
-c_mode_development <- TRUE
+c_mode_development <- FALSE
 
 # load edges either from rds or csv
 if(file.exists(c_rds_edges) & !c_mode_development) {
