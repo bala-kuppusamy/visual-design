@@ -23,7 +23,7 @@ suggestion_list <- function(nodes, suggestion_ids) {
 suggestion_box <- function(nodes, suggestion_ids) {
   box(width = 12,
       box(
-        title = "Friend Suggestions",
+        title = "Friend Suggestions (Top 5)",
         width = NULL,
         status = "primary",
         suggestion_list(nodes, suggestion_ids)

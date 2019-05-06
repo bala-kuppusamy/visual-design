@@ -1,86 +1,146 @@
 ---
-title: "High School Friendship Network Final Report"
-author: 'Team 4: Balavigneswara Kuppusamy, Minglan Ye, Jiamin Lei'
+title: "High School Friendship Network - Project Report"
+author: 'Balavigneswaran Kuppusamy, Minglan Ye, Jiamin Lei'
+date: "2019/05/06"
+always_allow_html: yes
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Section 1: Introduction
+## 1. Introduction: Domain Problem Characterization
 
-A high school in Marseille, France has conducted an analysis on historical data studying the influence of different factors on academic performance. The study observes student behavior and rates each student's peer connections on a scale of 1 to 10. Results show that receiving a high score on peer connections is highly correlated with not only academic excellence of the student while in school, but also superior development after graduation. 
+A high school in *Marseille, France* has conducted an analysis on historical data studying the influence of different factors on academic performance. The study observes student behavior and rates each student's peer connections on a scale of 1 to 10. Results show that receiving a high score on peer connections is highly correlated with not only academic excellence of the student while in school, but also superior development after graduation.
 
 In order to enhance frequent communication among the student body, the high school principal decides to employ data scientists to create an online social platform. The purpose of this platform is to create a convenient environment for students to quickly navigate through connections between fellow peers and identify ways of contact. A successful platform not only needs to be quickly accessible to students, but also encourages academic discussions among student groups.
 
+The proposed platform should provide easy options for students to explore the community, & observe network strength and enable them to make contacts with the right students to enable greater level of connectivity & communication among students.
 
+## 2. Operation & Data Type Abstraction Design
 
-## Section 2: Data/Operation Abstraction Design
+### Datasets
 
-The data scientist team compiled two datasets for the purpose of this project. Compiled after a 5-day survey, the "Contacts" dataset entails contacts of the students of nine classes. There are a total of 3 variables, where variables 1 and 2 record the respective ID of each student and variable 3 is the duration of contact on a level of 1-4, with 1 being the shortest and 4 being the longest. A clip of dataset is copied below:
+The data scientist team compiled two datasets for the purpose of this project after a 5-day survey. 
+
+- **Contacts** - entails contacts of the students of nine classes. Data records indicate the IDs of students having the contact and the duration of contact on a level of 1-4, with 1 being the shortest and 4 being the longest. A clip of dataset is copied below:
 
 ```{r contacts, echo=FALSE, warning=FALSE, message=FALSE}
-#install.packages(RCurl)
-#install.packages(bitops)
 library(RCurl)
-library(bitops)
 library(dplyr)
 library(readr)
-x <- getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/data/high-school/Contact-diaries-network_data_2013.csv")
-y <- read_delim(file=x, delim=" ", col_names=c('from', 'to', 'weight'))
-glimpse(y)
+library(knitr)
+library(kableExtra)
+
+x <- RCurl::getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/shiny/data/high-school/Contact-diaries-network_data_2013.csv")
+y <- readr::read_delim(file=x, delim=" ", col_names=c('from', 'to', 'weight'))
+dplyr::glimpse(y)
 ```
 
-The "metadata" dataset contains a total of 3 variables: student ID, class ID, and gender:
+- **Metadata** - contains student details like student ID, class ID, and gender.
+
 ```{r students, echo=FALSE, warning=FALSE, message=FALSE}
-#install.packages(RCurl)
-#install.packages(bitops)
-library(RCurl)
-library(bitops)
-library(dplyr)
-x <- getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/data/high-school/metadata_2013.txt")
-students <- read_tsv(file=x, col_names=c('id', "class", "gender"))
-glimpse(students)
+x <- RCurl::getURL("https://raw.githubusercontent.com/bala-kuppusamy/visual-design/master/network/shiny/data/high-school/metadata_2013.txt")
+students <- readr::read_tsv(file=x, col_names=c('id', "class", "gender"))
+dplyr::glimpse(students)
 ```
 
+- **Random User API** - provides user profile information like name, gender, ssn, profile pictures, etc over open web API with configurable parameters. The response from the API is in JSON format.
 
-## Section 3: Visual Encoding/Interaction Design
+```{r profiles, echo=FALSE, warning=FALSE, message=FALSE}
+url <- 'https://randomuser.me/api/?nat=us&results=2'
+json_raw <- jsonlite::fromJSON(txt = url)
+json_flat <- jsonlite::flatten(json_raw$results)
+json_flat
+```
 
-We want our users to quickly navigate through peer networks. A student will input into the application by logging into his or her profile, and a network map will be generated based on student information and strength of their relations indicated by data pulled from contact diaries level. 
+### Data Preparation Steps / Data Type Abstraction
 
-To help new students identify fellow classmates and peers, each node in our network map will display a student profile picture. For any pair of students who have contacted each other in the past as indicated in the contact diaries, their profiles will be linked by an edge. The duration of contact will be used to determine the weight of their relationship. We plan to use the following elements to enhance the aesthetics of our visual network:<br/>
-<br/> 1. Color representation for different classes
-<br/> 2. Thickness of edges representing the strength of relationships<br/>
- 
-Given the overall network map, we also want to include additional features allowing users to view details of each individual in the network such as the number of friends, the level and strength of connections. These features could help users in evaluating existing relationships and choosing new contacts to expand his or her social network. For example, once logged into the app, a student (user) will see his or her standing in the entire social network graph as well as his or her main profile on the sidebar. The network graph will show all students in the dataset colorcoded by a total of nine classes. The student (user) can then click on any profile (node) to view additional information on this individual.
+The following data preparation steps were executed from the 3 datasets to produce the nodes & edges needed for visual design.
 
+- Random user profiles loaded from web API, & converted from JSON format to a dataframe containing the variables of interest - e.g. name, gender, ssn (unique ID), profile picture, etc.
+- Data from *Metadata* dataset augmented with details from random user profiles (random mappings made between student metadata & user profiles). During the merge, care was taken such that students are matched with a user profile having the same gender. This data will be used as the `nodes`/`vertices` of the graph.
+- Data from *Contacts* dataset used as `edges` of the graph. The contact strenth considered as weight of the edge.
+- Graph built from the nodes & edges data using the igraph library.
+- igraph library provides various centrality measures for the network & can easily identify other network characteristics such as distance, shortest path, neighbors, etc.
+- Various centrality measures such as degree, centrality, closeness, betweenness, etc are calculated from the igraph.
+- The absolute values of the centrality measures are not in any way effective or usable by the students directly. Those absolute values have been transformed into *Quartile* measures between 1 - 4, where 4 indicating a student being in the highest quartile of the measure, & 1 the lowest.
+- These quartile measures are stored in the nodes dataframe against each node, & will be usable for multiple calculations to rank the students, etc.
+
+## Section 3: Visual Encoding / Interaction Design
+
+Students should be able to quickly navigate through peer networks displayed as graph / network map. Students will input into the application by logging into their profile, and a network map will be generated based on student information and strength of their relations indicated in the *contacts* data.
+
+### Considerations in the Visual Encoding:
+- Network map constructed using vizNetwork library using the nodes & edges, & is created as a force-directed graph layout.
+- Each node in the network map will display student profile picture (thumbnail size).
+- All the nodes will be of the same size, except the currently 'logged in' user, which will be shown in bigger size.
+- The node will also indicate the class student belongs to in the form of differentiating color bands encircling the profile pictures.
+- The edge thickness will depend on the strength of their contact & will be thicker if the contact is bidirectional.
+- In a seperate panel (sidebar on the right), the student can see a detailed profiles information of him/herself, with the different centrality measures highlighted along with their quartile ranking in appropriate color.
+- The student will also be able to view list of top 5 potential friend suggestions (calculated based on centrality measures). Only students within the 3rd and 4th quartiles of ALL centrality measures are selected, & obtained in the descending order of centrality values. All the existing neighbors are excluded from this list & the top 5 are picked to be displayed.
+
+The following color mapping has been used to highlight quartile rankings of centrality measures:
+
+```{r colormap, echo=FALSE, warning=FALSE, message=FALSE}
+color_map <- data.frame(Quartile = c(1, 2, 3, 4), Color = c('Red', 'Orange', 'Blue', 'Green'))
+kable(color_map) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "left") %>%
+  column_spec(1, extra_css = "text-align: center")
+```
+
+### Considerations in the Interaction Design:
+
+- Each node, when hovered over by mouse, will display the larger profile picture of the student, name, class & their student ID.
+- User will be presented with a list of all users in the network & be able to switch to different student profile (mimicking login by different user). This 'Log-in as' will serve as a way for admins to monitor student activities and interactions.
+- User will be able to toggle the network view where the size of the nodes will be based on their *Degree centrality* measure.
+- User will be able to click on a node in the graph & view the detailed profile of the user & their centrality measures.
+- User will be able to view the `shortest path` between him/herself & the selected node (in a text format). This specifies the easiest way to get to know that person, and who all can introduce the student to the party of interest.
+- Based on the centrality measures of the selected user, the system will provide recommendations on whether the selected user can be considered for potential friendship.
+
+To plot the network map and incorporate all intended features, igraph package was used to optimize the visual presentation of the graph and generate insights within the network using centrality functions. Computations generated by centrality methods will be displayed on the sidebar under each individual profile. The following centrality measures are displayed as part of every student profile (self & the selected node):
+
+```{r centralities, echo=FALSE, warning=FALSE, message=FALSE}
+measures <- c('Degree', 'Eigen Centrality', 'Closeness', 'Betweenness')
+descriptions <- c("How many direct, 'one hop' connections each node has to other nodes within the network.", 
+        "How well connected a node is, and how many links their connections have, and so on through the network.", 
+        "Calculates shortest paths between all nodes, then assigns each node a score based on its sum of shortest paths. This helps to see the strength of relationship between an individual and others.",
+        "Measures number of times a node lies on the shortest path between other nodes. Higher number indicates a person who is better connected in the high school circle."
+)
+centralities <- data.frame(Measure = measures, Description = descriptions)
+
+kable(centralities) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "left")
+```
+
+Since the network graph can be huge, some edges between nodes might be obscured due to overlapping nodes & edges and it would be hard to determine the strength of relationship between two nodes. Centrality measurements provide additional insights on the quality of connections that may be hard to detect visually in a network graph.
 
 ## Section 4: Algorithmic Design
-To carry out our design, we will be using shiny to display the main structure of our app, and igraph to build our network graph. A list of our R script files used in this process include: <br/>
-<br/> 1. data.R
-<br/> 2. ui.R
-<br/> 3. server.R
-<br/> 4. igraph-data.R
-<br/> 5. global.R <br/>
 
-Before we begin our design process, we must first prepare our data and store the cleaned version in a "data" script file. For the purpose of this presentation, we will download mock profiles and map if from json files to be used in our nodes using jsonlite, we then have to merge our mock profiles with information from our datasets. (**please feel free to add additiona details on steps you took here)
+### Optimizations implemented for improving the overall modular design of the application.
+- Shiny components were split into separate UI & server files to simplify the files.
+- Various 'non-shiny' tasks like, data preparation, igraph building, etc have been grouped into separate source files (data.R, igraph.R) & embedded as a link from the server file. This reduces the amount of 'noise' in the shiny server & UI components. 
+- User profile is displayed for both the logged-in user & for selected node. Since it is common information, that component has been identified as a common component to be 'modularized'. A seperate Shiny 'module' has been created for the UserProfile function & included via global.R.
+- A separate shiny module has been created to display 'Friend suggestions' information to seggregate the functionality & make it reusable.
 
-We will then employ shiny to design our app using scripts "ui" and "server". On our main page where network map will be displayed, we will have a dropdown menu allowing us to view the log-in page as any individual. For school purposes, this "Log-in as" will serve as a way for admins to monitor student activities and interactions Shiny also allows us to use the sidebar layout to display additional information on the student selected in the network graph. Every user profile will have two tabs, one displaying basic user information (name, class, connections etc.) and the other will display the timeline of activity since user registration. 
+### Optimizations implemented for improving the application performance.
+- The initial data preparation activity is very intense & time consuming. The data preparation steps & components are common for every user. So instead of rebuilding those data structures every time, the application automatically save those objets (nodes, edges, igraph) as '.rds' files & just load them directly for subsequent uses.
+- visNetwork graph building is an expensive operation. Instead of rebuilding the whole network everytime for minor changes, visNetwork proves a 'proxy' through which specific modifications on the network in an optimized manner.
+- Few performance optimization options for visNetwork have been used for easier & quicker rendering of the network graph. Those options are
+  - Disabling stabilization while rendering
+  - Disabling smooth edges while rendering
+  - Hiding the edges when the graph is being dragged.
+- Execute `shiny load test` & understand the application performance under higher load & identify performance bottlenecks, if any.
 
-To plot our network map and incorporate all intended features, we will be using the igraph package to optimize the visual presentation of our graph and generate insights within the network using centrality functions. Computations generated by centrality methods will be displayed on the sidebar under each individual profile. Our computations include:
-<br/> 1. Number of friends: this sums up the number of contacts, or the number of ties the user has been associated with based on the contact diaries dataset. 
-<br/> 2. Centrality: (**honestly have no idea what this particular measure is would appreciate some insights)
-<br/> 3. Betweenness: this allow users to see how many connections an individual (a node in the network) can make based on his or her position in the network. For any individual profile/node in the network, this measure calculates the number of geodesics (or shortest possible distance between two nodes) that pass through this node. Higher number indicates a person who is better connected in the high school circle. This measure is computed by the nodes_cntr$betweenness function
-<br/> 4. Closeness: this is computed by the nodes_cntr$closeness function in the graph by calculating a node’s number of shortest paths to other vertices (geodesic distance) and taking the inverse of it. This roughly allows us to see the strength of relationship between an individual and others. <br/>
-
-Because our network graph is big, some edges between nodes may be obscured due to overlapping and it would be hard to determine the strength of relationship between two nodes. Centrality measurements provide additional insights on the quality of connections that may be hard to detect in a network graph. 
-
+![Load Test](https://github.com/bala-kuppusamy/visual-design/blob/master/network/loadtest/loadtest.svg)
 
 ## Section 5: User Evaluation
 
 ## Section 6: Next Steps/Future Work
 
-An issue we have is how to improve transformations on the centrality measures to reduce complexity for our users. For example, most people wouldn't understand centrality values without further research and that might discourage usage. Since our purpose is to provide a convenient and popular platform for our users, we want to keep it as simple and easy to understand as possible. One idea we have is to improve the display of shortest path possible between two nodes. In short, the user can simply click on another person's profile and see what's the easiest way to get to know that person, and what middlemen are between the user and the party of interest.
-
-We also think that displaying the measure of closeness on a person's profile provides very little information because it doesn't tell us who is this person close to. Instead, we can improve our app by directly display the level of contact between two people (for example, by assigning a score). We can retrieve this information directly from the contact diaries, but it will require more steps on algorithmic design. For example, how do we want to display this information. We can either allow user to click on two profiles on the network graph to display their strength of connection, or we can display this information using a dropdown list on the sidebar. 
+An issue we have is how to improve transformations on the centrality measures to reduce complexity for our users. For example, most people wouldn't understand centrality values without further research and that might discourage usage. Since our purpose is to provide a convenient and popular platform for our users, we want to keep it as simple and easy to understand as possible. We also think that displaying the measure of closeness on a person's profile provides very little information because it doesn't tell us who is this person close to. Instead, we can improve our app by directly display the level of contact between two people (for example, by assigning a score). We can retrieve this information directly from the contact diaries, but it will require more steps on algorithmic design. For example, how do we want to display this information. We can either allow user to click on two profiles on the network graph to display their strength of connection, or we can display this information using a dropdown list on the sidebar. 
 

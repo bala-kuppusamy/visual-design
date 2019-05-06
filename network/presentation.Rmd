@@ -29,7 +29,7 @@ class: left, top
 
 - 
 
-Dataset contains school friends network data in a US high school in December 2013.
+Dataset contains school friends network data in a High school in Marseille, France.
 --
 
 - Research Question & Domain Problem

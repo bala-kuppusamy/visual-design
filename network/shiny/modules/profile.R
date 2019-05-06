@@ -50,7 +50,7 @@ friend_options <- function(path_counts, path_nodes_names, reco, rating) {
   box(width = 12, status = NULL,
       fluidRow(
         column(width = 6,
-           boxPad(color = "green",
+           boxPad(color = "purple",
               descriptionBlock(
                 header = path_counts,
                 text = path_nodes_names,

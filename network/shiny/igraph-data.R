@@ -67,9 +67,9 @@ calc_neighbor_node_ids <- function(net, nodes, selected_id) {
 # potential friend suggestions
 # --> exclude self
 # --> exclude immediate neighbors
-# --> ensure ALL centrality measures should be in the 3rd or 4th quartile.
+# --> ensure ALL centrality measures to be in the 3rd or 4th quartile
 # --> descending order of total centrality measures
-# --> sliced with top 5.
+# --> sliced the top 5
 friend_suggestions <- function(net, nodes, selected_id) {
   neighbor_node_ids <- calc_neighbor_node_ids(net, nodes, selected_id)
   # friend suggestion should exclude self & existing friends
