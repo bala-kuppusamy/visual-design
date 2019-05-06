@@ -23,7 +23,7 @@ The proposed platform should provide easy options for students to explore the co
 
 ## 2. Operation & Data Type Abstraction Design
 
-### Datasets
+#### Datasets
 
 The data scientist team compiled two datasets for the purpose of this project after a 5-day survey. 
 
@@ -58,7 +58,7 @@ json_flat <- jsonlite::flatten(json_raw$results)
 json_flat
 ```
 
-### Data Preparation Steps / Data Type Abstraction
+#### Data Preparation Steps / Data Type Abstraction
 
 The following data preparation steps were executed from the 3 datasets to produce the nodes & edges needed for visual design.
 
@@ -75,7 +75,7 @@ The following data preparation steps were executed from the 3 datasets to produc
 
 Students should be able to quickly navigate through peer networks displayed as graph / network map. Students will input into the application by logging into their profile, and a network map will be generated based on student information and strength of their relations indicated in the *contacts* data.
 
-### Considerations in the Visual Encoding:
+#### Considerations in the Visual Encoding:
 - Network map constructed using vizNetwork library using the nodes & edges, & is created as a force-directed graph layout.
 - Each node in the network map will display student profile picture (thumbnail size).
 - All the nodes will be of the same size, except the currently 'logged in' user, which will be shown in bigger size.
@@ -93,7 +93,7 @@ kable(color_map) %>%
   column_spec(1, extra_css = "text-align: center")
 ```
 
-### Considerations in the Interaction Design:
+#### Considerations in the Interaction Design:
 
 - Each node, when hovered over by mouse, will display the larger profile picture of the student, name, class & their student ID.
 - User will be presented with a list of all users in the network & be able to switch to different student profile (mimicking login by different user). This 'Log-in as' will serve as a way for admins to monitor student activities and interactions.
@@ -121,13 +121,13 @@ Since the network graph can be huge, some edges between nodes might be obscured 
 
 ## Section 4: Algorithmic Design
 
-### Optimizations implemented for improving the overall modular design of the application.
+#### Optimizations implemented for improving the overall modular design of the application.
 - Shiny components were split into separate UI & server files to simplify the files.
 - Various 'non-shiny' tasks like, data preparation, igraph building, etc have been grouped into separate source files (data.R, igraph.R) & embedded as a link from the server file. This reduces the amount of 'noise' in the shiny server & UI components. 
 - User profile is displayed for both the logged-in user & for selected node. Since it is common information, that component has been identified as a common component to be 'modularized'. A seperate Shiny 'module' has been created for the UserProfile function & included via global.R.
 - A separate shiny module has been created to display 'Friend suggestions' information to seggregate the functionality & make it reusable.
 
-### Optimizations implemented for improving the application performance.
+#### Optimizations implemented for improving the application performance.
 - The initial data preparation activity is very intense & time consuming. The data preparation steps & components are common for every user. So instead of rebuilding those data structures every time, the application automatically save those objets (nodes, edges, igraph) as '.rds' files & just load them directly for subsequent uses.
 - visNetwork graph building is an expensive operation. Instead of rebuilding the whole network everytime for minor changes, visNetwork proves a 'proxy' through which specific modifications on the network in an optimized manner.
 - Few performance optimization options for visNetwork have been used for easier & quicker rendering of the network graph. Those options are
@@ -136,11 +136,12 @@ Since the network graph can be huge, some edges between nodes might be obscured 
   - Hiding the edges when the graph is being dragged.
 - Execute `shiny load test` & understand the application performance under higher load & identify performance bottlenecks, if any.
 
-![Load Test](https://github.com/bala-kuppusamy/visual-design/blob/master/network/loadtest/loadtest.svg)
-
 ## Section 5: User Evaluation
 
 ## Section 6: Next Steps/Future Work
 
-An issue we have is how to improve transformations on the centrality measures to reduce complexity for our users. For example, most people wouldn't understand centrality values without further research and that might discourage usage. Since our purpose is to provide a convenient and popular platform for our users, we want to keep it as simple and easy to understand as possible. We also think that displaying the measure of closeness on a person's profile provides very little information because it doesn't tell us who is this person close to. Instead, we can improve our app by directly display the level of contact between two people (for example, by assigning a score). We can retrieve this information directly from the contact diaries, but it will require more steps on algorithmic design. For example, how do we want to display this information. We can either allow user to click on two profiles on the network graph to display their strength of connection, or we can display this information using a dropdown list on the sidebar. 
+- While the `shortest path` is being displayed as text, it should be best done by visually highlighting the intermediate nodes & the edges along the whole path.
+- Currently the 'Friend suggestions' are purely based on the centrality measures. Another important factor to be considered in that computation should be the `distance` of the target node from the current node. The target nodes with lower distance counts should be prioritized to be included in the list.
+- How to improve transformations on the centrality measures to reduce complexity for our users. For example, most people wouldn't understand centrality values without further research and that might discourage usage. Since our purpose is to provide a convenient and popular platform for our users, we want to keep it as simple and easy to understand as possible.
+- We also think that displaying the measure of closeness on a person's profile provides very little information because it doesn't tell us who is this person close to. Instead, we can improve our app by directly display the level of contact between two people (for example, by assigning a score). We can retrieve this information directly from the contact diaries, but it will require more steps on algorithmic design. For example, how do we want to display this information. We can either allow user to click on two profiles on the network graph to display their strength of connection, or we can display this information using a dropdown list on the sidebar. 
 
