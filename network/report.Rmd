@@ -138,6 +138,21 @@ Since the network graph can be huge, some edges between nodes might be obscured 
 
 ## Section 5: User Evaluation
 
+#### User testing process planned
+- One portion of the user base (Students) would be identified as test subjects for testing this tool & another portion for testing the alternate tool (Facebook)
+- Identified users would be presented with this networking tool & be configured for their respective classes.
+- Users would be asked to record all their network connections using this tool.
+- Users would be encouraged to explore the network & make connections with own classmates & students across classes.
+- Users would be asked to use only this tool exclusively for a month & not any other social media.
+- The second test set of users would be asked to use only the alternate tool (Facebook) exclusively for a month & not any other social media.
+
+#### Measuring the effectiveness of the tool compared to an alternate tool 
+- At the end of the testing period, students would be surveyed to provide their opinion of the tool regarding ease of use, availability of information needed for networking activities, intuitiveness of the tool, etc.
+- Measurements would be done to compare the increase in networking count for students who exclusively used this tool vs the alternate tool.
+- Students would be surveyed regarding their understanding of the overall school network & key players in the network & be compared with a survey from test subjects of the alternate tool.
+- Quantitative data on the increase in the network strength for the test subjects & their qualitative knowledge on the overall network would highlight the effectiveness of this tool vs the alternate option.
+
+
 ## Section 6: Next Steps/Future Work
 
 - While the `shortest path` is being displayed as text, it should be best done by visually highlighting the intermediate nodes & the edges along the whole path.
